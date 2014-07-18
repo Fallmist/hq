@@ -1,20 +1,38 @@
 ---
 layout: default
 ---
+<div id="banner">
+        <span id="logo"></span>
 
-<div class="home">
+        <a href="https://github.com/mgup/hq" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/mgup/hq/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/mgup/hq/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+      <div class="wrapper">
+        <nav>
+          <ul></ul>
+        </nav>
+        <section>
+        <div class="home">
 
-  <h1>Posts</h1>
+          <h1>Posts</h1>
 
-  <ul class="posts">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
-        <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-      </li>
-    {% endfor %}
-  </ul>
+          <ul class="posts">
+            {% for post in site.posts %}
+              <li>
+                <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+                <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
 
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+          <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
 
-</div>
+        </div>
+          </section>  
+       </div>
