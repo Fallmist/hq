@@ -1,0 +1,87 @@
+---
+layout: post
+title:  "Запуск Матрицы МГУП"
+date:   2014-07-17 00:00:22
+categories: jekyll update
+---
+
+Для начала нам нужно установить необходимые библиотеки, программы и файлы.
+Начнем с установки RVM, ruby и MySQL, bundle install:
+
+1) Запускаем Терминал.
+
+2) Перед тем, как что-нибудь сделать мы должны убедиться, что все пакеты актуальны:
+{% highlight ruby %}
+sudo apt-get update
+{% endhighlight %}
+
+3) Далее мы можем приступить к установке RVM (Ruby Version Manager). Это программа, позволяющая использовать несколько версий Ruby на одной машине. В данном случае она нужна, чтобы установить последнюю версию Ruby.
+
+Если у вас нет curl — его можно установить командой:
+{% highlight ruby %}
+sudo apt-get install curl
+{% endhighlight %}
+4) Затем ставим RVM:
+{% highlight ruby %}
+curl -sSL https://get.rvm.io | bash -s stable
+{% endhighlight %}
+5) После установки RVM его необходимо запустить:
+{% highlight ruby %}
+source /home/inflab/.rvm/scripts/rvm
+{% endhighlight %}
+6) С использованием RVM, Ruby легко установить:
+{% highlight ruby %}
+rvm install 2.1.2
+{% endhighlight %}
+7) Устанавливаем Rails:
+{% highlight ruby %}
+gem install rails
+{% endhighlight %}
+8) Устанавливаем MySQL:
+{% highlight ruby %}
+sudo apt-get install mysql-server
+{% endhighlight %}
+9) Устанавливаем дополнительные библиотеки для работы с программой. Для этого нам необходимо зайти в директорию программы (у меня путь: cd Downloads/hq-master/) и выполнить команды (bundle install в последнюю очередь):
+{% highlight ruby %}
+sudo apt-get install libqt4-dev
+
+sudo apt-get install freetds-dev
+
+sudo apt-get install libmysql-ruby libmysqlclient-dev
+
+bundle install
+{% endhighlight %}
+
+
+###На этом этапе нам нужно создать базу данных с целью запуска “Матрица МГУП”
+
+Нужно сделать следующие шаги:
+
+1) Нужно войти под:
+{% highlight ruby %}
+/bin/bash --login
+{% endhighlight %}
+2) Затем проверяем версию ruby:
+{% highlight ruby %}
+ruby -v
+{% endhighlight %}
+3) При необходимости подключаем версию 2.1.2:
+{% highlight ruby %}
+rvm ruby-2.1.2
+{% endhighlight %}
+4) Используем команду для переноса структуры из структуры базы данных в таблицы базы данных:
+{% highlight ruby %}
+rake db:setup
+{% endhighlight %}
+5) Запускаем сервер:
+{% highlight ruby %}
+rails s
+{% endhighlight %}
+6) Проверяем сервер в проводнике браузера:
+{% highlight ruby %}
+http://127.0.0.1:3000
+{% endhighlight %}
+
+
+[jekyll-gh]: https://github.com/jekyll/jekyll
+[jekyll]:    http://jekyllrb.com
