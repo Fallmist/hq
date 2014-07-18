@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Your awesome title</title>
+    <title>Установка Elementary OS рядом с Windows</title>
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
-    <link rel="canonical" href="http://yourdomain.com/hq/">
+    <link rel="canonical" href="http://yourdomain.com/hq/jekyll/update/2014/07/17/elementary-os/">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/hq/css/main.css">
@@ -53,38 +53,67 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="home">
+      <div class="post">
 
-  <h1>Posts</h1>
+  <header class="post-header">
+    <h1>Установка Elementary OS рядом с Windows</h1>
+    <p class="meta">Jul 17, 2014</p>
+  </header>
 
-  <ul class="posts">
-    
-      <li>
-        <span class="post-date">Jul 17, 2014</span>
-        <a class="post-link" href="/hq/jekyll/update/2014/07/17/proxy/">Настройка proxy</a>
-      </li>
-    
-      <li>
-        <span class="post-date">Jul 17, 2014</span>
-        <a class="post-link" href="/hq/jekyll/update/2014/07/17/matrix/">Запуск Матрицы МГУП</a>
-      </li>
-    
-      <li>
-        <span class="post-date">Jul 17, 2014</span>
-        <a class="post-link" href="/hq/jekyll/update/2014/07/17/jekyll/">Установка Jekyll</a>
-      </li>
-    
-      <li>
-        <span class="post-date">Jul 17, 2014</span>
-        <a class="post-link" href="/hq/jekyll/update/2014/07/17/elementary-os/">Установка Elementary OS рядом с Windows</a>
-      </li>
-    
-  </ul>
+  <article class="post-content">
+  <p>1) Создать загрузочную флешку с помощью программы ultraISO.</p>
 
-  <p class="rss-subscribe">subscribe <a href="/hq/feed.xml">via RSS</a></p>
+<p>2) Изменить настройки в Bios, чтобы при включении компьютера первой запустилась загрузочная флешка.
+Становимся на строчку с названием нашей флешки (Patriot Memory) и поднимаем ее в самый верх при помощи клавиши “+” на клавиатуре.</p>
+
+<p>Нажимаем клавишу F10 и перезагружаем компьютер.</p>
+
+<p>Если не удается произвести установку OS в связи с тем, что не загружается окно установки (оно просто черное), то при загрузке с флешки, в момент, когда экран черный и снизу значок с человечком, нажмите любую клавишу. Появится окно с выбором языка (выбираем русский), далее в следующем окне нажимаем клавишу F6, ставим галочки напротив acpi=off и nomodeset, нажать “Esc”. Нажать “Установить”.</p>
+
+<p>Если все нормально, то устанавливаем способом, приведенным ниже.</p>
+
+<p>3) Загружаемся с установочного устройства. Далее будет предложен выбор языка системы. Видим экран подготовки к установке системы, нажимаем «продолжить». Появляется окно, в котором установщик спросит нас, что ему делать при установке. Для того, чтобы Windows осталась целой, выбираем «Другой вариант» и жмём «Продолжить».
+Теперь мы видим менеджер разбивки диска на разделы (назовем его так).</p>
+
+<p>4) Windows находится в разделе с файловой системой NTFS. Выбираем пустой раздел. Жмем «добавить», в открывшемся окне выставляем следующие настройки:</p>
+<ul>
+	<li>тип нового раздела — первичный</li>
+	<li>размер нового раздела в мегабайтах — 2000мб</li>
+	<li>использовать как — файл подкачки (swap)</li>
+	<li>точку монтирования не ставим</li>
+</ul>
+<p>Этот раздел будет использоваться как файл подкачки.
+Жмем «ок»
+Еще раз выбираем пустой раздел, его будем использовать под OS
+Жмем «добавить», в открывшемся окне выставляем следующие настройки:</p>
+<ul>
+	<li>тип нового раздела — логический</li>
+	<li>размер нового раздела в мегабайтах — по желанию (желательно не менее 15 Гб)</li>
+	<li>использовать как —-журналируемая файловая система (Ext4) точка монтирования - «/»</li>
+</ul>
+<p>Жмем «ок»</p>
+
+<p>5) В «Устройство для установки системного загрузчика» выбираем /dev/sda .
+Жмем «Установить сейчас».</p>
+
+<p>6) Заводим пользователя. Пароль обязателен. Жмём продолжить и дожидаемся окончания установки системы, после чего жмём 
+перезагрузить. После перезагрузки вы попадаете в меню выбора операционной системы — GRUB.
+Выбрав Elementary, мы попадем в нашу только что установленную Elementary.</p>
+
+<!--
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">end</span>
+<span class="n">print_hi</span><span class="p">(</span><span class="s1">&#39;Tom&#39;</span><span class="p">)</span>
+<span class="c1">#=&gt; prints &#39;Hi, Tom&#39; to STDOUT.</span></code></pre></div>
+
+
+Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll's GitHub repo][jekyll-gh].-->
+
+
+  </article>
 
 </div>
-
       </div>
     </div>
 

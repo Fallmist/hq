@@ -5,29 +5,345 @@
     <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</description>
     <link>http://yourdomain.com/hq/</link>
     <atom:link href="http://yourdomain.com/hq/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 18 Jul 2014 13:28:21 +0400</pubDate>
-    <lastBuildDate>Fri, 18 Jul 2014 13:28:21 +0400</lastBuildDate>
+    <pubDate>Fri, 18 Jul 2014 14:51:21 +0400</pubDate>
+    <lastBuildDate>Fri, 18 Jul 2014 14:51:21 +0400</lastBuildDate>
     <generator>Jekyll v2.1.1</generator>
     
       <item>
-        <title>Welcome to Jekyll!</title>
-        <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory - edit this post and re-build (or run with the &lt;code&gt;-w&lt;/code&gt; switch) to see your changes!
-To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention: YYYY-MM-DD-name-of-post.ext.&lt;/p&gt;
+        <title>Настройка proxy</title>
+        <description>&lt;p&gt;1) Сначала надо настроить proxy в системе&lt;/p&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;p&gt;Для этого надо открыть системные настройки → Сеть → Сетевая прокси-служба. В методе выбрать «вручную»:&lt;/p&gt;
 
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;HTTP&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Proxy&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;указать&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;192&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;168&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;порт&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3128&lt;/span&gt;
+
+&lt;span class=&quot;no&quot;&gt;HTTPS&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Proxy&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;указать&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;192&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;168&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;порт&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3128&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;2) Настройка proxy для консольной команды “apt-get”, предназначенный для установки программ.&lt;/p&gt;
+
+&lt;p&gt;Для этого с правами администратора надо открыть файл, расположенный по пути «/etc/apt/apt.conf»&lt;/p&gt;
+
+&lt;p&gt;Полный синтаксис команды: &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nano&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/etc/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;В нем указать следующие настройки proxy:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;Acquire&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://имя пользователя:пароль@адрес:порт&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+
+&lt;span class=&quot;no&quot;&gt;Acquire&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ftp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;ftp://имя пользователя:пароль@адрес:порт&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+
+&lt;span class=&quot;no&quot;&gt;Acquire&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://имя пользователя:пароль@адрес:порт&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+
+&lt;span class=&quot;no&quot;&gt;Acquire&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Proxy&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Для сохранения изменений необходимо нажать сочетание клавиш на клавиатуре «ctrl+o» и подтвердить сохранение файла нажатием кнопки «enter».&lt;/p&gt;
+
+&lt;p&gt;Для выхода из редактирования файла необходимо нажать сочетание клавиш на клавиатуре «ctrl+x».&lt;/p&gt;
+
+&lt;p&gt;3) Для использования других команд нужно добавить глобальные настройки proxy.&lt;/p&gt;
+
+&lt;p&gt;Для этого в терминале нужно ввести две строчки, предварительно войти в оболочку bash командой в терминале:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;sr&quot;&gt;/bin/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http_proxy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;имя&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;пользователя&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;пароль@адрес&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;порт&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https_proxy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;имя&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;пользователя&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;пароль@адрес&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;порт&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Thu, 17 Jul 2014 04:00:22 +0400</pubDate>
+        <link>http://yourdomain.com/hq/jekyll/update/2014/07/17/proxy/</link>
+        <guid isPermaLink="true">http://yourdomain.com/hq/jekyll/update/2014/07/17/proxy/</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Запуск Матрицы МГУП</title>
+        <description>&lt;p&gt;Для начала нам нужно установить необходимые библиотеки, программы и файлы.
+Начнем с установки RVM, ruby и MySQL, bundle install:&lt;/p&gt;
+
+&lt;p&gt;1) Запускаем Терминал.&lt;/p&gt;
+
+&lt;p&gt;2) Перед тем, как что-нибудь сделать мы должны убедиться, что все пакеты актуальны:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;3) Далее мы можем приступить к установке RVM (Ruby Version Manager). Это программа, позволяющая использовать несколько версий Ruby на одной машине. В данном случае она нужна, чтобы установить последнюю версию Ruby.&lt;/p&gt;
+
+&lt;p&gt;Если у вас нет curl — его можно установить командой:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curl&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;4) Затем ставим RVM:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;curl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sSL&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stable&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;5) После установки RVM его необходимо запустить:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/home/in&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scripts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;6) С использованием RVM, Ruby легко установить:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;7) Устанавливаем Rails:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rails&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;8) Устанавливаем MySQL:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;9) Устанавливаем дополнительные библиотеки для работы с программой. Для этого нам необходимо зайти в директорию программы (у меня путь: cd Downloads/hq-master/) и выполнить команды (bundle install в последнюю очередь):&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;libqt4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dev&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;freetds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dev&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;libmysql&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ruby&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;libmysqlclient&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dev&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;На этом этапе нам нужно создать базу данных с целью запуска “Матрица МГУП”&lt;/h3&gt;
+
+&lt;p&gt;Нужно сделать следующие шаги:&lt;/p&gt;
+
+&lt;p&gt;1) Нужно войти под:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;sr&quot;&gt;/bin/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;2) Затем проверяем версию ruby:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;ruby&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;3) При необходимости подключаем версию 2.1.2:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ruby&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;4) Используем команду для переноса структуры из структуры базы данных в таблицы базы данных:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;rake&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setup&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;5) Запускаем сервер:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;rails&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;6) Проверяем сервер в проводнике браузера:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;ss&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;127&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Thu, 17 Jul 2014 04:00:22 +0400</pubDate>
+        <link>http://yourdomain.com/hq/jekyll/update/2014/07/17/matrix/</link>
+        <guid isPermaLink="true">http://yourdomain.com/hq/jekyll/update/2014/07/17/matrix/</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Установка Jekyll</title>
+        <description>&lt;p&gt;1) Требования для установки Jekyll&lt;/p&gt;
+
+&lt;p&gt;В системе должны быть установлены следующие пакеты программ:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ruby&lt;/li&gt;
+&lt;li&gt;RubyGems&lt;/li&gt;
+&lt;li&gt;NodeJS&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2) Установка дополнительных пакетов (если они уже установлены, то их нет необходимости ставить)&lt;/p&gt;
+
+&lt;p&gt;Проверить это можно поочередно, выполняя в терминале следующие команды:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;ruby&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;нажать&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;нажать&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Для проверки удачной установки nodejs необходимо в терминале выполнить следующую команду, которая позволяет войти под интерктивную оболочку Nodejs:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Если в терминале будет аналогичная ситуация как на скриншоте ниже, то установка nodejs прошла удачно. 
+Для выхода из оболочки нужно нажать сочетание клавиш «ctrl+c».&lt;/p&gt;
+
+&lt;h3 id=&quot;ruby&quot;&gt;Установка Ruby&lt;/h3&gt;
+
+&lt;p&gt;Перед установкой ruby, необходимо установить систему управления версиями ruby (RVM).
+Это программа, позволяющая использовать несколько версий Ruby на одной машине. В данном случае она 
+нам нужна, чтобы установить последнюю версию Ruby.&lt;/p&gt;
+
+&lt;p&gt;1) Если у вас нет curl — его можно установить командой:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curl&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;2) Затем ставим RVM:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;curl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stable&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;3) После установки RVM его необходимо запустить:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/.rvm/s&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cripts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;4) С использованием RVM, Ruby легко установить:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;rvm&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;rubygems&quot;&gt;Установка RubyGems&lt;/h3&gt;
+
+&lt;p&gt;RubyGems устанавливаются вместе с Ruby.&lt;/p&gt;
+
+&lt;h3 id=&quot;nodejs&quot;&gt;Установка Nodejs&lt;/h3&gt;
+
+&lt;p&gt;Для установки Nodejs необходимо в терминале выполнить следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodejs&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;jekyll&quot;&gt;Установка Jekyll&lt;/h3&gt;
+
+&lt;p&gt;Для установки Jekyll необходимо в терминале выполнить следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jekyll&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;Создание нового веб-приложения&lt;/h3&gt;
+
+&lt;p&gt;Для создания нового веб-приложения с использованием Jekyll необходимо в терминале 
+выполнить следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;jekyll&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name_app&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Для запуска веб-приложения необходимо перейти в папку с именем приложения. Для этого 
+необходимо выполнить в терминале следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name_app&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Для запуска веб-приложения необходимо в терминале выполнить следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;jekyll&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serve&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Веб-приложение будет доступно по адресу 127.0.0.1:4000&lt;/p&gt;
+
+&lt;h3 id=&quot;github-pages&quot;&gt;Создание Github pages&lt;/h3&gt;
+
+&lt;p&gt;1) Для создания github pages необходимо войти в аккаунт github, используя свой логин и 
+пароль.&lt;/p&gt;
+
+&lt;p&gt;2) Далее нужно создать новый репозиторий, кликнув на кнопке New repository.&lt;/p&gt;
+
+&lt;p&gt;3) Далее в окне настроек нового репозитория ввести его будущее имя: &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;где username — ваше имя пользователя на github, описание (необязательно), выбрать public и нажать кнопку Create repository. &lt;/p&gt;
+
+&lt;p&gt;4) Будет создан пустой репозиторий с инструкцией по работе с ним.&lt;/p&gt;
+
+&lt;p&gt;5) Далее необходимо перейти в папку с именем приложения jekyll, созданного ранее. Для этого необходимо выполнить в терминале следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name_app&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;6) Первоначальная настройка Git&lt;/p&gt;
+
+&lt;p&gt;Первое, что вам следует сделать после установки Git’а, — указать ваше имя и адрес электронной почты. Это важно, потому что каждый коммит в Git’е содержит эту информацию, и она включена в коммиты, передаваемые вами, и не может быть далее изменена. &lt;/p&gt;
+
+&lt;p&gt;Для этого нужно в терминале последовательно выполнить следующие команды:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;global&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;username&amp;quot;&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;где&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;username&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;—&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;ваше&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;имя&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;пользователя&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;на&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;github&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;global&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;johndoe&lt;/span&gt;&lt;span class=&quot;vi&quot;&gt;@example&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;где&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;johndoe&lt;/span&gt;&lt;span class=&quot;vi&quot;&gt;@example&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;—&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;ваш&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;почтовый&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;адрес&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;7) Далее в соответствии с инструкцией в терминале поочередно выполняются следующие команды:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;инициализация&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;пустого&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;репозитория&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;сохранение&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;всех&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;сделанных&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;изменений&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;commit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;«комментарий»&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;комментирование&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;всех&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;изменений&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;remote&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+&lt;span class=&quot;err&quot;&gt;где&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;username&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;—&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;ваше&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;имя&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;пользователя&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;на&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;github&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;добавление&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;ссылки&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;на&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;репозиторий&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;отправка&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;данных&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;в&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;репозиторий&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;После ввода последней команды будет предложено ввести логин и пароль. 
+После ввода логина (вашего имени пользователя github) необходимо нажать на клавиатуре кнопку enter.&lt;/p&gt;
+
+&lt;p&gt;При вводе пароля сам пароль в linux системах не отображается. После завершения ввода 
+пароля необходимо нажать на клавиатуре кнопку enter.&lt;/p&gt;
+
+&lt;p&gt;Отправленное приложение будет доступно по адресу username.github.io, где username — 
+ваше имя пользователя github.&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 17 Jul 2014 04:00:22 +0400</pubDate>
+        <link>http://yourdomain.com/hq/jekyll/update/2014/07/17/jekyll/</link>
+        <guid isPermaLink="true">http://yourdomain.com/hq/jekyll/update/2014/07/17/jekyll/</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Установка Elementary OS рядом с Windows</title>
+        <description>&lt;p&gt;1) Создать загрузочную флешку с помощью программы ultraISO.&lt;/p&gt;
+
+&lt;p&gt;2) Изменить настройки в Bios, чтобы при включении компьютера первой запустилась загрузочная флешка.
+Становимся на строчку с названием нашей флешки (Patriot Memory) и поднимаем ее в самый верх при помощи клавиши “+” на клавиатуре.&lt;/p&gt;
+
+&lt;p&gt;Нажимаем клавишу F10 и перезагружаем компьютер.&lt;/p&gt;
+
+&lt;p&gt;Если не удается произвести установку OS в связи с тем, что не загружается окно установки (оно просто черное), то при загрузке с флешки, в момент, когда экран черный и снизу значок с человечком, нажмите любую клавишу. Появится окно с выбором языка (выбираем русский), далее в следующем окне нажимаем клавишу F6, ставим галочки напротив acpi=off и nomodeset, нажать “Esc”. Нажать “Установить”.&lt;/p&gt;
+
+&lt;p&gt;Если все нормально, то устанавливаем способом, приведенным ниже.&lt;/p&gt;
+
+&lt;p&gt;3) Загружаемся с установочного устройства. Далее будет предложен выбор языка системы. Видим экран подготовки к установке системы, нажимаем «продолжить». Появляется окно, в котором установщик спросит нас, что ему делать при установке. Для того, чтобы Windows осталась целой, выбираем «Другой вариант» и жмём «Продолжить».
+Теперь мы видим менеджер разбивки диска на разделы (назовем его так).&lt;/p&gt;
+
+&lt;p&gt;4) Windows находится в разделе с файловой системой NTFS. Выбираем пустой раздел. Жмем «добавить», в открывшемся окне выставляем следующие настройки:&lt;/p&gt;
+&lt;ul&gt;
+	&lt;li&gt;тип нового раздела — первичный&lt;/li&gt;
+	&lt;li&gt;размер нового раздела в мегабайтах — 2000мб&lt;/li&gt;
+	&lt;li&gt;использовать как — файл подкачки (swap)&lt;/li&gt;
+	&lt;li&gt;точку монтирования не ставим&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Этот раздел будет использоваться как файл подкачки.
+Жмем «ок»
+Еще раз выбираем пустой раздел, его будем использовать под OS
+Жмем «добавить», в открывшемся окне выставляем следующие настройки:&lt;/p&gt;
+&lt;ul&gt;
+	&lt;li&gt;тип нового раздела — логический&lt;/li&gt;
+	&lt;li&gt;размер нового раздела в мегабайтах — по желанию (желательно не менее 15 Гб)&lt;/li&gt;
+	&lt;li&gt;использовать как —-журналируемая файловая система (Ext4) точка монтирования - «/»&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Жмем «ок»&lt;/p&gt;
+
+&lt;p&gt;5) В «Устройство для установки системного загрузчика» выбираем /dev/sda .
+Жмем «Установить сейчас».&lt;/p&gt;
+
+&lt;p&gt;6) Заводим пользователя. Пароль обязателен. Жмём продолжить и дожидаемся окончания установки системы, после чего жмём 
+перезагрузить. После перезагрузки вы попадаете в меню выбора операционной системы — GRUB.
+Выбрав Elementary, мы попадем в нашу только что установленную Elementary.&lt;/p&gt;
+
+&lt;!--
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Tom&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &amp;#39;Hi, Tom&amp;#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;.&lt;/p&gt;
+
+Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll&#39;s GitHub repo][jekyll-gh].--&gt;
 
 </description>
-        <pubDate>Fri, 18 Jul 2014 16:39:51 +0400</pubDate>
-        <link>http://yourdomain.com/hq/jekyll/update/2014/07/18/welcome-to-jekyll/</link>
-        <guid isPermaLink="true">http://yourdomain.com/hq/jekyll/update/2014/07/18/welcome-to-jekyll/</guid>
+        <pubDate>Thu, 17 Jul 2014 04:00:22 +0400</pubDate>
+        <link>http://yourdomain.com/hq/jekyll/update/2014/07/17/elementary-os/</link>
+        <guid isPermaLink="true">http://yourdomain.com/hq/jekyll/update/2014/07/17/elementary-os/</guid>
         
         
         <category>jekyll</category>
