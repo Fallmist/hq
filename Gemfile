@@ -1,7 +1,12 @@
 source 'https://rubygems.org'
 
+gem 'airbrussh', require: false
+gem 'awesome_print', require: 'ap'
 gem 'rails'
+gem 'telegram-bot-ruby'
 gem 'mysql2'
+
+gem 'dotenv-rails'
 
 gem 'sass-rails'
 gem 'bootstrap-sass'
@@ -35,7 +40,7 @@ gem 'gruff'
 gem 'chunky_png'
 gem 'barby'
 gem 'nested_form' #, github: 'ryanb/nested_form'
-gem 'hairtrigger'
+# gem 'hairtrigger'
 gem 'axlsx_rails'
 gem 'acts_as_xlsx'
 gem 'ace-rails-ap'
@@ -50,10 +55,7 @@ gem 'jquery-validation-rails'
 # В терминале: bundle config local.morpher /Users/storkvist/Sites/mgup/morpher
 # gem 'morpher', github: 'mgup/morpher', branch: :master
 
-gem 'honeybadger'
-gem 'dotenv-rails'
-gem 'tiny_tds'
-gem 'activerecord-sqlserver-adapter'
+gem 'tiny_tds', github: 'rails-sqlserver/tiny_tds'
 
 gem 'httparty'
 gem 'sidekiq'
@@ -61,7 +63,10 @@ gem 'sidetiq'
 gem 'sinatra', require: nil
 gem 'numbers_and_words'
 
+# gem 'mysql2psql'
+
 group :development do
+
   gem 'thin'
   #gem 'debugger'
   gem 'better_errors'
@@ -70,17 +75,15 @@ group :development do
   gem 'brakeman', require: false
   gem 'rails-erd'
 
-  gem 'capistrano', '~> 3.2.0'
+  gem 'capistrano-rails'
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
-  gem 'capistrano-rails', '~> 1.1.0'
   gem 'capistrano-sidekiq'
   gem 'sextant'
   gem 'quiet_assets'
   gem 'letter_opener'
   gem 'bullet'
   gem 'meta_request'
-  gem 'dotenv-deployment'
   gem 'inch', require: false
 end
 

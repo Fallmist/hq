@@ -25,7 +25,7 @@ class Entrance::ApplicationsController < ApplicationController
     end
     @new_applications = []
 
-    if @campaign.id == 32014
+    if @campaign.id == 52015
       @campaign.competitive_groups.each do |g|
         found = false
         @entrant.applications.each do |a|
@@ -38,10 +38,40 @@ class Entrance::ApplicationsController < ApplicationController
         end
         unless found
           # Эта конкурсная группа подходит.
-          @new_applications << @entrant.applications.build(
-              competitive_group_item_id: g.items.first.id,
-              campaign_id: @campaign.id
-          )
+          if g.items.first.budget?
+            item = g.items.first
+            if (item.number_budget_o > 0 || item.number_quota_o > 0)
+              @new_applications << @entrant.applications.build(
+                competitive_group_item_id: item.id,
+                campaign_id: @campaign.id,
+                is_payed: false,
+                education_form_id: 11
+              )
+            end
+            if (item.number_budget_oz > 0 || item.number_quota_oz > 0)
+              @new_applications << @entrant.applications.build(
+                competitive_group_item_id: item.id,
+                campaign_id: @campaign.id,
+                is_payed: false,
+                education_form_id: 12
+              )
+            end
+            if (item.number_budget_z > 0  || item.number_quota_z > 0)
+              @new_applications << @entrant.applications.build(
+                competitive_group_item_id: item.id,
+                campaign_id: @campaign.id,
+                is_payed: false,
+                education_form_id: 10
+              )
+            end
+          end
+          if g.items.first.payed?
+            @new_applications << @entrant.applications.build(
+                competitive_group_item_id: g.items.first.id,
+                campaign_id: @campaign.id,
+                is_payed: true
+            )
+          end
         end
       end
     else
@@ -65,22 +95,76 @@ class Entrance::ApplicationsController < ApplicationController
               key &&= (@entrant.exam_results.by_exam(exam.exam_id).first.score ? exam.min_score <= @entrant.exam_results.by_exam(exam.exam_id).first.score : true)
             end
             found = !key
-            @entrant.applications.each do |a|
-              # Только для неотозванных заявлений.
-              if a.called_back?
-                # Проверяем, что у человека ещё нет заявлений в этой конкурсной группе.
-                next
-              else
-                found = true if a.competitive_group_item_id == g.items.first.id
-              end
-            end
+            # @entrant.applications.each do |a|
+            #   # Только для неотозванных заявлений.
+            #   if a.called_back?
+            #     # Проверяем, что у человека ещё нет заявлений в этой конкурсной группе.
+            #     next
+            #   else
+            #     found = true if a.competitive_group_item_id == g.items.first.id
+            #   end
+            # end
 
             unless found
               # Эта конкурсная группа подходит.
-              @new_applications << @entrant.applications.build(
-                competitive_group_item_id: g.items.first.id,
-                campaign_id: @campaign.id
-              )
+              # @new_applications << @entrant.applications.build(
+              #   competitive_group_item_id: g.items.first.id,
+              #   campaign_id: @campaign.id
+              # )
+              item = g.items.first
+
+              if item.budget?
+                if (item.number_budget_o > 0 || item.number_quota_o > 0)
+                  @new_applications << @entrant.applications.build(
+                    competitive_group_item_id: item.id,
+                    campaign_id: @campaign.id,
+                    is_payed: false,
+                    education_form_id: 11
+                  )
+                end
+                if (item.number_budget_oz > 0 || item.number_quota_oz > 0)
+                  @new_applications << @entrant.applications.build(
+                    competitive_group_item_id: item.id,
+                    campaign_id: @campaign.id,
+                    is_payed: false,
+                    education_form_id: 12
+                  )
+                end
+                if (item.number_budget_z > 0  || item.number_quota_z > 0)
+                  @new_applications << @entrant.applications.build(
+                    competitive_group_item_id: item.id,
+                    campaign_id: @campaign.id,
+                    is_payed: false,
+                    education_form_id: 10
+                  )
+                end
+              end
+              if item.payed?
+                if (item.number_paid_o > 0)
+                  @new_applications << @entrant.applications.build(
+                    competitive_group_item_id: item.id,
+                    campaign_id: @campaign.id,
+                    is_payed: true,
+                    education_form_id: 11
+                  )
+                end
+                if (item.number_paid_oz > 0)
+                  @new_applications << @entrant.applications.build(
+                    competitive_group_item_id: item.id,
+                    campaign_id: @campaign.id,
+                    is_payed: true,
+                    education_form_id: 12
+                  )
+                end
+                if (item.number_paid_z > 0)
+                  @new_applications << @entrant.applications.build(
+                    competitive_group_item_id: item.id,
+                    campaign_id: @campaign.id,
+                    is_payed: true,
+                    education_form_id: 10
+                  )
+                end
+              end
             end
           else
             next
@@ -101,7 +185,7 @@ class Entrance::ApplicationsController < ApplicationController
   def create
     if @application.save
       # Теперь нужно заявлению присвоить номер.
-      number = '14-'
+      number = '15-'
       number << @application.competitive_group_item.direction.letters
 
       second = case @application.competitive_group_item.direction.qualification_code
@@ -109,7 +193,7 @@ class Entrance::ApplicationsController < ApplicationController
                  'М'
                when 70
                  'А'
-               else case @application.competitive_group_item.form
+               else case @application.education_form_id
                     when 10
                       'З'
                     when 11
@@ -123,7 +207,7 @@ class Entrance::ApplicationsController < ApplicationController
 
       number << (@application.entrant.ioo ? 'И' : second)
 
-      payment = @application.competitive_group_item.payed? ? 'п' : ''
+      payment = @application.is_payed ? 'п' : ''
 
       last = Entrance::Application.
         where('number LIKE ?', "#{number}%#{payment}")
@@ -197,7 +281,8 @@ class Entrance::ApplicationsController < ApplicationController
   def resource_params
     params.fetch(:entrance_application, {}).permit(
       :entrant_id, :number, :original, :registration_date, :campaign_id,
-      :competitive_group_item_id, :packed, :status_id, :created_at, :updated_at
+      :competitive_group_item_id, :packed, :status_id, :created_at, :updated_at, :is_payed,
+      :education_form_id
     )
   end
 end

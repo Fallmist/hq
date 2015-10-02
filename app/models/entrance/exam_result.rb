@@ -58,12 +58,52 @@ class Entrance::ExamResult < ActiveRecord::Base
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.EntranceTestResult do
-        xml.UID                 id
+        xml.UID                 "test_result_#{id}"
         xml.ResultValue         score
-        xml.ResultSourceTypeID  self[:form]
-        xml.EntranceTestTypeID  exam[:form]
+        if 16233 == opts[:application].id && 76 == exam.id
+          xml.ResultSourceTypeID  3
+        elsif 16233 == opts[:application].id && 95 == exam.id
+          xml.ResultSourceTypeID  3
+        else
+          xml.ResultSourceTypeID  self[:form]
+        end
+
+        xml.EntranceTestTypeID  exam.creative ? 2 : 1
+
         xml.CompetitiveGroupID  opts[:competitive_group_id]
         xml.EntranceTestSubject { fis_entrance_test_subject(xml) }
+
+        if 16233 == opts[:application].id && 76 == exam.id
+          xml.ResultDocument do
+            xml.OlympicDocument do
+              xml.UID "olympic_document_5"
+              xml.OriginalReceived true
+              xml.DocumentNumber '49309763950'
+              xml.DiplomaTypeID 1
+              xml.OlympicID 416
+              xml.LevelID 1
+            end
+          end
+        elsif 16233 == opts[:application].id && 95 == exam.id
+          xml.ResultDocument do
+            xml.OlympicDocument do
+              xml.UID "olympic_document_4"
+              xml.OriginalReceived true
+              xml.DocumentNumber '49312155912'
+              xml.DiplomaTypeID 2
+              xml.OlympicID 258
+              xml.LevelID 1
+            end
+          end
+        elsif 2 == self[:form].to_i
+          xml.ResultDocument do
+            xml.InstitutionDocument do
+              xml.DocumentTypeID 2
+              xml.DocumentNumber opts[:application].number
+              xml.DocumentDate opts[:application].created_at.to_date.iso8601
+            end
+          end
+        end
       end
     end
 
@@ -87,10 +127,14 @@ class Entrance::ExamResult < ActiveRecord::Base
   private
 
   def fis_entrance_test_subject(xml)
-    if exam.use_subject_id
-      xml.SubjectID exam.use_subject_id
-    else
-      xml.Subject_name exam.name
-    end
+    # if 12014 == entrant.campaign_id || 22014 == entrant.campaign_id
+    #   xml.SubjectName exam.name
+    # else
+      if exam.use_subject_id
+        xml.SubjectID exam.use_subject_id
+      else
+        xml.SubjectName exam.name
+      end
+    # end
   end
 end

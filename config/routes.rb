@@ -1,4 +1,19 @@
 HQ::Application.routes.draw do
+  namespace :purchase do
+    resources :suppliers
+    resources :goods
+    resources :purchases
+    resources :line_items
+    get 'line_item/search_result' => 'line_items#search_result', as: :search_result
+  end
+
+  resources :universities
+  resources :reviews
+  get 'review/search_result' => 'reviews#search_results', as: :search_results
+
+  resources :phonebook
+  get 'phonebook/index'
+
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.is?(:developer) } do
     mount Sidekiq::Web => '/sidekiq'
@@ -14,21 +29,17 @@ HQ::Application.routes.draw do
      [Sidekiq::Queue.new.latency < 30 ? 'OK' : 'UHOH' ]]
   }
 
-  # Выпуски (группы выпускников).
-  resources :graduates do
-    get 'students', on: :member
+  root to: 'dashboard#index'
 
-    resources :graduate_students
-  end
-
-  resources :blanks
+  match '/404' => 'errors#error404', via: [:get, :post, :patch, :delete]
+  match '/500' => 'errors#error500', via: [:get, :post, :patch, :delete]
 
   devise_for :users, controllers: { registrations: 'users' }
     as :user do
       get 'user/edit' => 'devise/registrations#edit', as: 'user_profile'
       put 'user/user_update' => 'devise/registrations#update'
     end
-  devise_for :students
+  devise_for :students, controllers: {registrations: 'students'}
 
   # Мониторинг состояния сервера.
   get 'system/stats'
@@ -79,6 +90,7 @@ HQ::Application.routes.draw do
 
   namespace :library do
     get '/cards', to: 'cards#index', as: :cards
+    get '/cards/print_all', to: 'cards#print_all', as: :print_all_cards
     get '/cards/students/:student/create', to: 'cards#create', as: :create_student_card
     get '/cards/students/:student/print', to: 'cards#print', as: :print_student_card
     get '/cards/users/:user/create', to: 'cards#create', as: :create_user_card
@@ -87,6 +99,10 @@ HQ::Application.routes.draw do
   end
 
   resources :groups do
+    member do
+      get 'session_call', defaults: { format: 'pdf' }
+    end
+
     get '/print_group.pdf', to: 'groups#print_group', defaults: { format: 'pdf' }, as: :print_group
   end
 
@@ -105,17 +121,22 @@ HQ::Application.routes.draw do
       get 'list', on: :collection
     end
   end
-  resources :persons
+  resources :persons do
+    get 'create_employer', to: 'persons#create_employer', on: :member
+  end
   resources :students do
     namespace :social do
         resources :deeds, controller: 'documents'
     end
+    get 'soccard', to: 'students#soccard', on: :collection
+    get 'soccard_mistakes', to: 'students#soccard_mistakes', on: :collection
     get 'documents' => 'students#documents'
     get 'orders' => 'students#orders'
     get 'study' => 'students#study'
     get 'hostel' => 'students#hostel'
     get 'grants' => 'students#grants'
     get 'supports', to: 'supports#index', on: :collection
+    get 'quality', to: 'students#quality', on: :collection
     get 'report.xlsx', to: 'students#report', on: :collection, defaults: { format: 'xlsx' }, as: :print_report
     resources :supports do
       get 'download_pdf.pdf', to: 'supports#download_pdf', defaults: { format: 'pdf' }, as: :student_support
@@ -135,6 +156,7 @@ HQ::Application.routes.draw do
       get 'plans', to: 'plans#index'
       get 'control', to: 'exams#control'
     end
+
     resources :groups, path:  '/group' do
       get '/progress' => 'progress#index'
       get '/progress/discipline/:discipline' => 'progress#discipline', as: :discipline
@@ -205,13 +227,23 @@ HQ::Application.routes.draw do
   end
 
   namespace :office do
-    resources :orders do
-      get '/', to: 'orders#show', defaults: { format: 'pdf' }, as: :show
-      get 'drafts', to: 'orders#drafts', on: :collection
-      get 'underways', to: 'orders#underways', on: :collection
+    resources :orders, except: [:show] do
+      # get '/', to: 'orders#show', defaults: { format: 'pdf' }, as: :show
+      # get 'drafts', to: 'orders#drafts', on: :collection
+      # get 'underways', to: 'orders#underways', on: :collection
       get 'entrance_protocol', to: 'orders#entrance_protocol', on: :member
+      get 'rebukes', to: 'orders#rebukes', on: :collection
     end
+    resources :orders, only: [:show],
+                       defaults: { format: 'pdf' },
+                       constraints: { format: /(pdf|xml)/ }
+
+
+    get 'drafts', to: 'orders#drafts'
+    get 'underways', to: 'orders#underways'
     get 'orders/new(/:page)', to: 'orders#new', defaults: { page: 1 }
+
+
 
     resources :order_templates do
       resources :order_blanks
@@ -286,12 +318,14 @@ HQ::Application.routes.draw do
   get '/ajax/group_exams' => 'ajax#group_exams'
   get '/ajax/orderstudent' => 'ajax#orderstudent'
   get '/ajax/ordermeta' => 'ajax#ordermeta'
+  get '/ajax/orderreason' => 'ajax#orderreason'
 
 
   resources :education_prices, only: [:index]
 
   resources :directions, only: :index
   namespace :entrance do
+    get 'import' => 'import#index'
     resources :items do
       get 'protocols', on: :collection, defaults: { format: :pdf }
     end
@@ -301,8 +335,12 @@ HQ::Application.routes.draw do
         get 'conflicts'
         get 'ratings'
         get 'protocol_permit'
+        get 'choice'
       end
-
+      
+      resources :achievements do
+          get 'ajax_update', to: 'achievements#ajax_update', on: :member
+      end
       get 'temp_print_all_checks', on: :member
 
       get 'dashboard', on: :member
@@ -311,11 +349,13 @@ HQ::Application.routes.draw do
       get 'print_all', on: :member, defaults: { format: :pdf }
       get 'report',       on: :member
       get 'register',     on: :member
+      get '/print_department_register.pdf', to: 'campaigns#print_department_register', on: :member, defaults: { format: 'pdf' }, as: :print_department_register
       get 'rating',     on: :member
       get 'crimea_rating',     on: :member
       get 'results',     on: :member
-      # get 'balls',     on: :member
+      get 'balls',     on: :member
       get 'orders', on: :collection
+      get 'numbers', on: :collection
 
       resources :dates
       resources :exams do
@@ -331,6 +371,7 @@ HQ::Application.routes.draw do
       resources :entrants do
         get 'history', on: :member
         get 'events', on: :member
+        get 'check', on: :collection
         resources :exam_results
         resources :checks do
           get 'show.pdf', to: 'checks#show', on: :member, defaults: { format: 'pdf' }, as: :print
@@ -360,6 +401,7 @@ HQ::Application.routes.draw do
       post 'fis/check'   => 'fis#check'
 
       get 'fis/test'  => 'fis#test'
+      get 'fis/kladr' => 'fis#kladr'
     end
 
     resources :document_movements
@@ -374,7 +416,8 @@ HQ::Application.routes.draw do
     get 'gzgu/mon_pk_f2_2014_06_23',  to: 'gzgu#mon_pk_f2_2014_06_23'
   end
 
-  root to: 'dashboard#index'
+  get 'fractals-radial', to: 'fractals#radial'
+  get 'test-exception', to: 'dashboard#test_exception'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

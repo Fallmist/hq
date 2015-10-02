@@ -15,7 +15,7 @@ SimpleNavigation::Configuration.run do |navigation|
       end
 
       primary.item :user_rating,
-        '<span class="glyphicons podium"></span> Отчёт об эффективности'.html_safe,
+                   '<span class="glyphicons podium"></span> Отчёт об эффективности'.html_safe,
                    rating_user_path(current_user)
 
       if current_user.is?(:subdepartment) || current_user.is?(:dean)
@@ -32,11 +32,11 @@ SimpleNavigation::Configuration.run do |navigation|
                  '<span class="glyphicons notes_2"></span> Поданные заявления'.html_safe,
                  applications_entrance_campaign_path(Entrance::Campaign::CURRENT)
 
-    if user_signed_in?
-      primary.item :entrance_campaign_report,
-                   '<span class="glyphicons adjust_alt"></span> Статистика'.html_safe,
-                   report_entrance_campaign_path(Entrance::Campaign::CURRENT)
+    primary.item :entrance_campaign_report,
+                 '<span class="glyphicons adjust_alt"></span> Статистика'.html_safe,
+                 report_entrance_campaign_path(Entrance::Campaign::CURRENT)
 
+    if user_signed_in?
       if can?(:register, Entrance::Campaign)
         primary.item :entrance_campaign_register,
                      '<span class="glyphicons notes_2"></span> Регистрационный журнал'.html_safe,
@@ -54,7 +54,7 @@ SimpleNavigation::Configuration.run do |navigation|
         #              dashboard_entrance_campaign_path(Entrance::Campaign::CURRENT)
 
         primary.item :new_entrance_application, 'Абитуриенты',
-                     entrance_campaign_entrants_path(Entrance::Campaign::CURRENT)
+                     choice_entrance_campaign_path(Entrance::Campaign::CURRENT)
       end
 
       # primary.item :new_entrants_results,
@@ -70,31 +70,39 @@ SimpleNavigation::Configuration.run do |navigation|
                      results_entrance_campaign_path(Entrance::Campaign::CURRENT)
       end
 
+      if can?(:manage, Entrance::Achievement)
+        primary.item :entrantce_achievements,
+                     '<span class="glyphicons fire"></span> Индивидуальные достижения'.html_safe,
+                     entrance_campaign_achievements_path(Entrance::Campaign::CURRENT)
+      end
+
       if can?(:statistics, Entrance::Contract)
         primary.item :entrance_contracts_statistics,
                      '<span class="glyphicons coins"></span> Статистика платного приёма'.html_safe,
                      paid_enrollment_entrance_campaign_path(Entrance::Campaign::CURRENT)
-                     # statistics_entrance_campaign_contracts_path(Entrance::Campaign::CURRENT)
+        # statistics_entrance_campaign_contracts_path(Entrance::Campaign::CURRENT)
       end
     end
 
-    primary.item :rating,
-                 '<span class="glyphicons charts"></span> Рейтинги и приказы о зачислении'.html_safe,
-                 rating_entrance_campaign_path(Entrance::Campaign::CURRENT),
-                 highlights_on: -> { (params[:action] == 'rating' || params[:action] == 'crimea_rating') && params[:controller] == 'entrance/campaigns'}
+    if can?(:manage, Entrance::Entrant)
+      primary.item :rating,
+                   '<span class="glyphicons charts"></span> Конкурсные списки и приказы о зачислении'.html_safe,
+                   rating_entrance_campaign_path(Entrance::Campaign::CURRENT),
+                   highlights_on: -> { (params[:action] == 'rating' || params[:action] == 'crimea_rating') && params[:controller] == 'entrance/campaigns'}
+    end
 
-    primary.item :entrance_dates, 'Сроки проведения',
-                 entrance_campaign_dates_path(Entrance::Campaign::CURRENT)
+    # primary.item :entrance_dates, 'Сроки проведения',
+    #              entrance_campaign_dates_path(Entrance::Campaign::CURRENT)
 
     primary.item :entrance_events, 'Вступительные испытания',
-                 entrance_campaign_event_path(Entrance::Campaign::CURRENT, id: 1)
+                 entrance_campaign_event_path(Entrance::Campaign::CURRENT, id: Entrance::Campaign.find(Entrance::Campaign::CURRENT).events.first.id)
 
-    # primary.item :entrants_results,
-    #              '<span class="glyphicons inbox"></span> Результаты вступительных испытаний'.html_safe,
-    #              balls_entrance_campaign_path(Entrance::Campaign::CURRENT)
+    primary.item :entrants_results,
+                 '<span class="glyphicons inbox"></span> Результаты вступительных испытаний'.html_safe,
+                 balls_entrance_campaign_path(Entrance::Campaign::CURRENT)
 
-    primary.item :entrance_min_scores, 'Минимальные баллы для вступительных испытаний',
-                 entrance_campaign_min_scores_path(Entrance::Campaign::CURRENT)
+    # primary.item :entrance_min_scores, 'Минимальные баллы для вступительных испытаний',
+    #              entrance_campaign_min_scores_path(Entrance::Campaign::CURRENT)
 
     primary.item :education_prices, 'Стоимость обучения', education_prices_path
 
@@ -132,6 +140,9 @@ SimpleNavigation::Configuration.run do |navigation|
         primary.item :nav_group_lists, 'Списки', class: 'nav-header disabled'
         primary.item :students,  'Студенты'.html_safe, students_path, icon: 'user', highlights_on: -> { 'students' == params[:controller] }
       end
+      if can? :index, :groups
+        primary.item :groups,     'Группы'.html_safe, groups_path, icon: 'user', highlights_on: -> { 'groups' == params[:controller] }
+      end
       if current_user.is?(:developer)
         primary.item :roles,        'Роли'.html_safe, roles_path, icon: 'tags', highlights_on: -> { 'roles' == params[:controller] }
         primary.item :appointments, 'Должности'.html_safe, appointments_path, icon: 'tags'
@@ -148,16 +159,12 @@ SimpleNavigation::Configuration.run do |navigation|
 
         primary.item :achievement_period, 'Периоды ввода достижений НПР',
                      achievement_periods_path, icon: 'list'
-
         primary.item :event_categories, 'Категории событий', event_categories_path, icon: 'th-list'
-
         primary.item :specialities, 'Направления'.html_safe, specialities_path, icon: 'list', highlights_on: -> { 'specialities' == params[:controller] }
         primary.item :blanks, 'Бланки документов', blanks_path, icon: 'file'
-        primary.item :groups,     'Группы'.html_safe, groups_path, icon: 'user', highlights_on: -> { 'groups' == params[:controller] }
+        primary.item :phonebook, 'Телефонная книга'.html_safe, phonebook_index_path, icon: 'phone-alt'
       end
     end
-
-    # ======================================
     if user_signed_in?
       if (can? :index, :selection_contracts) or (can? :index, :payment_types)
         primary.item :nav_group_selection, 'Платный приём', class: 'nav-header disabled'
@@ -172,17 +179,15 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # ======================================
     if user_signed_in?
-      if (can? :manage, :plans) or (can? :manage, Graduate)
+      if can?(:manage, :plans)
         primary.item :nav_group_institutes, 'Дирекции', class: 'nav-header disabled'
       end
-      if can? :manage, :plans
+      if can?(:manage, :plans)
         primary.item :plans, 'Учебные планы'.html_safe, study_plans_path, icon: 'bell'
+        primary.item :quality, 'Показатели качества знаний'.html_safe, quality_students_path, icon: 'list-alt'
       end
-      if can? :manage, :all
+      if can?(:manage, :all)
         primary.item :control, 'Контроль ведомостей'.html_safe, study_control_path, icon: 'warning-sign'
-      end
-      if can? :manage, Graduate
-        primary.item :graduates, 'Выпускники', graduates_path, icon: 'folder-open'
       end
     end
 
@@ -190,7 +195,8 @@ SimpleNavigation::Configuration.run do |navigation|
     if user_signed_in?
       if can? :manage, :library
         primary.item :library, 'Библиотека', class: 'nav-header disabled'
-        primary.item :library_cards, 'Создать читательский билет'.html_safe, library_cards_path, icon: 'book', highlights_on: -> { params[:controller].include?('library') }
+        primary.item :library_cards, 'Создать читательский билет'.html_safe, library_cards_path, icon: 'book', highlights_on: -> { params[:controller].include?('library') && params[:action] != 'print_all' }
+        primary.item :print_library_cards, '<span class="glyphicons print"></span> Печать читательских билетов'.html_safe, library_print_all_cards_path
       end
     end
 
@@ -251,7 +257,10 @@ SimpleNavigation::Configuration.run do |navigation|
       if can? :manage, My::Support
         primary.item :social_applications, 'Заявления на мат. помощь', social_applications_path, icon: 'file'
         primary.item :support, 'СПИСКИ по заявлениям'.html_safe,  lists_social_applications_path, icon: 'list'
-        primary.item :support_form, 'Оставить заявление на мат. помощь', 'http://matrix3.mgup.ru/my/support', icon: 'ok'
+        # primary.item :support_form, 'Оставить заявление на мат. помощь', 'http://matrix3.mgup.ru/my/support', icon: 'ok'
+      end
+      if can? :rebukes, Office::Order
+        primary.item :rebukes,    'Приказы об объявлении выговора'.html_safe, rebukes_office_orders_path, icon: 'exclamation-sign'
       end
       if can? :manage, Event.new(event_category_id: EventCategory::MEDICAL_EXAMINATION_CATEGORY)
         primary.item :event,    'Профосмотр сотрудников'.html_safe, event_path(1), icon: 'calendar'
@@ -279,14 +288,17 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # ======================================
     if user_signed_in?
-      if current_user.is?(:developer)
+      if can? :manage, Office::Order
         primary.item :nav_group_orders, 'Приказы', class: 'nav-header disabled'
         primary.item :office_orders, raw('Работа с приказами <span class="caret"></span>'), office_orders_path, icon: 'file', class: 'dropdown',  link: { :'data-toggle' => 'dropdown', :'class' => 'dropdown-toggle' } do |orders|
           orders.dom_class = 'dropdown-menu'
-          orders.item :orders_drafts, 'Черновики приказов', drafts_office_orders_path, icon: 'paperclip'
-          orders.item :orders_underways, 'Приказы на подписи', underways_office_orders_path, icon: 'time'
-
-          orders.item :order_templates, 'Шаблоны', office_order_templates_path, icon: 'list'
+          orders.item :new_order, 'Создать проект приказа', new_office_order_path, icon: 'plus'
+          orders.item :orders_drafts, 'Черновики приказов', office_drafts_path, icon: 'paperclip'
+          orders.item :orders_underways, 'Приказы на подписи', office_underways_path, icon: 'time'
+          orders.item :orders, 'Подписанные приказы', office_orders_path, icon: 'folder-open'
+          if current_user.is? :developer
+            orders.item :order_templates, 'Шаблоны', office_order_templates_path, icon: 'list'
+          end
         end
       end
     end
@@ -322,13 +334,35 @@ SimpleNavigation::Configuration.run do |navigation|
         # end
 
         if can? :validate_additional, Achievement
-        #if current_user.is?(:dean)
+          #if current_user.is?(:dean)
           primary.item :validate_additional_achievements, 'Подтверждение показателей эффективности (поручения директора)',
                        validate_additional_achievements_path, icon: 'check'
         end
       end
       if can? :manage, :all
         primary.item :npr, 'Заполненение НПР'.html_safe, print_achievements_path, icon: 'list'
+      end
+    end
+
+    if user_signed_in?
+      if current_user.is?(:recenz)
+        primary.item :review, 'Рецензирование изданий', class: 'nav-header disabled'
+      end
+      if current_user.is?(:recenz)
+        primary.item :review, 'Рецензии', reviews_path, icon: 'list'
+        primary.item :university, 'Университеты', universities_path, icon: 'list'
+      end
+    end
+
+    if user_signed_in?
+      if current_user.is?(:developer) || current_user.is?(:purchase_manager) || current_user.is?(:ciot)
+        primary.item :purchase_purchases, 'Закупки', class: 'nav-header disabled'
+      end
+      if current_user.is?(:developer) || current_user.is?(:purchase_manager) || current_user.is?(:ciot)
+        primary.item :purchase_purchases, 'Заявки', purchase_purchases_path, icon: 'file'
+        primary.item :purchase_goods, 'Товары', purchase_goods_path, icon: 'list'
+        primary.item :purchase_suppliers, 'Поставщики', purchase_suppliers_path, icon: 'list'
+        primary.item :purchase_line_items, 'ДФП', purchase_line_items_path, icon: 'stats'
       end
     end
 
@@ -369,44 +403,44 @@ SimpleNavigation::Configuration.run do |navigation|
 
   # Define the primary navigation
   #navigation.items do |primary|
-    # Add an item to the primary navigation. The following params apply:
-    # key - a symbol which uniquely defines your navigation item in the scope of the primary_navigation
-    # name - will be displayed in the rendered navigation. This can also be a call to your I18n-framework.
-    # url - the address that the generated item links to. You can also use url_helpers (named routes, restful routes helper, url_for etc.)
-    # options - can be used to specify attributes that will be included in the rendered navigation item (e.g. id, class etc.)
-    #           some special options that can be set:
-    #           :if - Specifies a proc to call to determine if the item should
-    #                 be rendered (e.g. <tt>:if => Proc.new { current_user.admin? }</tt>). The
-    #                 proc should evaluate to a true or false value and is evaluated in the context of the view.
-    #           :unless - Specifies a proc to call to determine if the item should not
-    #                     be rendered (e.g. <tt>:unless => Proc.new { current_user.admin? }</tt>). The
-    #                     proc should evaluate to a true or false value and is evaluated in the context of the view.
-    #           :method - Specifies the http-method for the generated link - default is :get.
-    #           :highlights_on - if autohighlighting is turned off and/or you want to explicitly specify
-    #                            when the item should be highlighted, you can set a regexp which is matched
-    #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
-    #
-    #primary.item :key_1, 'name', url, options
+  # Add an item to the primary navigation. The following params apply:
+  # key - a symbol which uniquely defines your navigation item in the scope of the primary_navigation
+  # name - will be displayed in the rendered navigation. This can also be a call to your I18n-framework.
+  # url - the address that the generated item links to. You can also use url_helpers (named routes, restful routes helper, url_for etc.)
+  # options - can be used to specify attributes that will be included in the rendered navigation item (e.g. id, class etc.)
+  #           some special options that can be set:
+  #           :if - Specifies a proc to call to determine if the item should
+  #                 be rendered (e.g. <tt>:if => Proc.new { current_user.admin? }</tt>). The
+  #                 proc should evaluate to a true or false value and is evaluated in the context of the view.
+  #           :unless - Specifies a proc to call to determine if the item should not
+  #                     be rendered (e.g. <tt>:unless => Proc.new { current_user.admin? }</tt>). The
+  #                     proc should evaluate to a true or false value and is evaluated in the context of the view.
+  #           :method - Specifies the http-method for the generated link - default is :get.
+  #           :highlights_on - if autohighlighting is turned off and/or you want to explicitly specify
+  #                            when the item should be highlighted, you can set a regexp which is matched
+  #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
+  #
+  #primary.item :key_1, 'name', url, options
 
-    # Add an item which has a sub navigation (same params, but with block)
-    #primary.item :key_2, 'name', url, options do |sub_nav|
-      # Add an item to the sub navigation (same params again)
-      #sub_nav.item :key_2_1, 'name', url, options
-    #end
+  # Add an item which has a sub navigation (same params, but with block)
+  #primary.item :key_2, 'name', url, options do |sub_nav|
+  # Add an item to the sub navigation (same params again)
+  #sub_nav.item :key_2_1, 'name', url, options
+  #end
 
-    # You can also specify a condition-proc that needs to be fullfilled to display an item.
-    # Conditions are part of the options. They are evaluated in the context of the views,
-    # thus you can use all the methods and vars you have available in the views.
-    #primary.item :key_3, 'Admin', url, :class => 'special', :if => Proc.new { current_user.admin? }
-    #primary.item :key_4, 'Account', url, :unless => Proc.new { logged_in? }
+  # You can also specify a condition-proc that needs to be fullfilled to display an item.
+  # Conditions are part of the options. They are evaluated in the context of the views,
+  # thus you can use all the methods and vars you have available in the views.
+  #primary.item :key_3, 'Admin', url, :class => 'special', :if => Proc.new { current_user.admin? }
+  #primary.item :key_4, 'Account', url, :unless => Proc.new { logged_in? }
 
-    # you can also specify a css id or class to attach to this particular level
-    # works for all levels of the menu
-    # primary.dom_id = 'menu-id'
-    # primary.dom_class = 'menu-class'
+  # you can also specify a css id or class to attach to this particular level
+  # works for all levels of the menu
+  # primary.dom_id = 'menu-id'
+  # primary.dom_class = 'menu-class'
 
-    # You can turn off auto highlighting for a specific level
-    # primary.auto_highlight = false
+  # You can turn off auto highlighting for a specific level
+  # primary.auto_highlight = false
 
   #end
 

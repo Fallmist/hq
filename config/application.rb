@@ -1,5 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
+require 'csv'
+
 # Pick the frameworks you want:
 require 'active_record/railtie'
 require 'action_controller/railtie'
@@ -28,5 +30,8 @@ module HQ
     config.autoload_paths += Dir["#{config.root}/lib"]
 
     config.assets.paths << "#{Rails.root}/app/assets/docs"
+
+    require "#{Rails.root}/lib/custom_public_exceptions"
+    config.exceptions_app = CustomPublicExceptions.new(Rails.public_path)
   end
 end

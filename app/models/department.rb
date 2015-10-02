@@ -32,7 +32,9 @@ class Department < ActiveRecord::Base
              foreign_key: :department_parent
 
   has_many :positions, foreign_key: :acl_position_department
-  has_many :users, through: :positions
+  has_many :users, through: :positions, foreign_key: :dep_id
+
+  has_many :purchase_purchases, :class_name => 'Purchase::Purchase', foreign_key: :dep_id
 
   validates :name, presence: true
   validates :abbreviation, presence: true
@@ -48,6 +50,8 @@ class Department < ActiveRecord::Base
 
   scope :ordered, -> { order(:department_name) }
 
+  scope :active, -> { where(department_active: 1, department_parent: nil) }
+
   scope :without, -> where {
     cond = all
      if where[:id]!=nil
@@ -61,29 +65,14 @@ class Department < ActiveRecord::Base
   def payment_types(year = nil)
     types = []
     if year
-      specialities.includes(:payment_types).each do |s|
-        years=[]
-        payments = s.payment_types.from_year(year)
-        years << {year: year, full_time: payments.from_form(101).last,
-                  part_time: payments.from_form(102).last, abcsentia: payments.from_form(103).last,
-                  distance: payments.from_form(105).last}  if payments != []
-        types << { name: s.name + "\n" + s.code, prices: years}
-      end
-      types.compact.uniq
+      specialities.includes(:payment_types).map { |s| types << { name: s.name + "\n" + s.code, prices: [s.calculate_payment_types(year)].compact} }
     else
       specialities.includes(:payment_types).each do |s|
-        years = []
-        s.payment_types.collect{ |type| type.year}.uniq.each do |year|
-          payments = s.payment_types.from_year(year)
-          years << {year: year, full_time: payments.from_form(101).last,
-                    part_time: payments.from_form(102).last, abcsentia: payments.from_form(103).last,
-                    distance: payments.from_form(105).last}  if payments != []
-        end
-        types << { name: s.name + "\n" + s.code, prices: years} if years != []
+        years = s.payment_types.collect{ |type| type.year}.uniq.collect { |year| s.calculate_payment_types(year) }
+        types << { name: s.name + "\n" + s.code, prices: years} unless years.empty?
       end
-
-      types.compact.uniq
     end
+    types.compact.uniq
   end
 
   def to_nokogiri
@@ -94,11 +83,24 @@ class Department < ActiveRecord::Base
         xml.name  name
       end
     end
-
     builder.doc
   end
 
   def to_xml
     to_nokogiri.to_xml
   end
+
+  def soccard_name
+    case id
+    when IPIT
+      '02801'
+    when IIDIZH
+      '02802'
+    when IKIM
+      '02803'
+    when IGRIK
+      '02804'
+    end
+  end
 end
+

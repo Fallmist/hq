@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   alias_attribute :password, :user_password
   alias_attribute :email,    :user_email
   alias_attribute :phone,    :user_phone
+  alias_attribute :active,   :user_active
 
   belongs_to :fname, class_name: Dictionary, primary_key: :dictionary_id, foreign_key: :user_fname
   accepts_nested_attributes_for :fname
@@ -125,7 +126,7 @@ class User < ActiveRecord::Base
   end
 
   def valid_password?(password)
-    if self.password.present?
+    if self.password.present? && self.active == true
       if ::Digest::MD5.hexdigest(password) == self.user_password
         # self.password = password
         # self.client_password = nil
@@ -214,48 +215,49 @@ class User < ActiveRecord::Base
     full_name+(' (' + roles.collect{|r| r.title }.join(', ') + ')')
   end
 
-  trigger.before(:insert) do
-    %q(
-         SET
-            NEW.last_name_hint = (SELECT dictionary.dictionary_ip
-                                  FROM dictionary
-                                  JOIN user ON NEW.user_fname = dictionary.dictionary_id
-                                  LIMIT 1),
-            NEW.first_name_hint = (SELECT dictionary.dictionary_ip
-                                  FROM dictionary
-                                  JOIN user ON NEW.user_iname = dictionary.dictionary_id
-                                  LIMIT 1),
-            NEW.patronym_hint = (SELECT dictionary.dictionary_ip
-                                  FROM dictionary
-                                  JOIN user ON NEW.user_oname = dictionary.dictionary_id
-                                  LIMIT 1)
-       )
-  end
-
-  trigger.before(:update) do |t|
-    t.where('NEW.user_fname <> OLD.user_fname OR NEW.user_iname <> OLD.user_iname OR
-             NEW.user_oname <> OLD.user_oname') do
-      %q(
-         SET
-            NEW.last_name_hint = (SELECT dictionary.dictionary_ip
-                                  FROM dictionary
-                                  JOIN user ON NEW.user_fname = dictionary.dictionary_id
-                                  LIMIT 1),
-            NEW.first_name_hint = (SELECT dictionary.dictionary_ip
-                                  FROM dictionary
-                                  JOIN user ON NEW.user_iname = dictionary.dictionary_id
-                                  LIMIT 1),
-            NEW.patronym_hint = (SELECT dictionary.dictionary_ip
-                                  FROM dictionary
-                                  JOIN user ON NEW.user_oname = dictionary.dictionary_id
-                                  LIMIT 1)
-       )
-    end
-  end
+  # trigger.before(:insert) do
+  #   %q(
+  #        SET
+  #           NEW.last_name_hint = (SELECT dictionary.dictionary_ip
+  #                                 FROM dictionary
+  #                                 JOIN user ON NEW.user_fname = dictionary.dictionary_id
+  #                                 LIMIT 1),
+  #           NEW.first_name_hint = (SELECT dictionary.dictionary_ip
+  #                                 FROM dictionary
+  #                                 JOIN user ON NEW.user_iname = dictionary.dictionary_id
+  #                                 LIMIT 1),
+  #           NEW.patronym_hint = (SELECT dictionary.dictionary_ip
+  #                                 FROM dictionary
+  #                                 JOIN user ON NEW.user_oname = dictionary.dictionary_id
+  #                                 LIMIT 1)
+  #      )
+  # end
+  #
+  # trigger.before(:update) do |t|
+  #   t.where('NEW.user_fname <> OLD.user_fname OR NEW.user_iname <> OLD.user_iname OR
+  #            NEW.user_oname <> OLD.user_oname') do
+  #     %q(
+  #        SET
+  #           NEW.last_name_hint = (SELECT dictionary.dictionary_ip
+  #                                 FROM dictionary
+  #                                 JOIN user ON NEW.user_fname = dictionary.dictionary_id
+  #                                 LIMIT 1),
+  #           NEW.first_name_hint = (SELECT dictionary.dictionary_ip
+  #                                 FROM dictionary
+  #                                 JOIN user ON NEW.user_iname = dictionary.dictionary_id
+  #                                 LIMIT 1),
+  #           NEW.patronym_hint = (SELECT dictionary.dictionary_ip
+  #                                 FROM dictionary
+  #                                 JOIN user ON NEW.user_oname = dictionary.dictionary_id
+  #                                 LIMIT 1)
+  #      )
+  #   end
+  # end
 
   def self.current
     Thread.current[:user]
   end
+
   def self.current=(user)
     Thread.current[:user] = user
   end

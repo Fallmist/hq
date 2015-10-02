@@ -1,0 +1,36 @@
+     <td class="text-muted"><%= achievement.entrant.id %></td>
+     <td><%= achievement.entrant.full_name %> (<%= achievement.entrant.packed_application ? achievement.entrant.packed_application.number : '<span class="text-danger">нет заявления с пакетом документов</span>'.html_safe %>), <%= achievement.document %></td>
+     <% if achievement.score.nil? %>
+     <td colspan="2">	 
+		<div class="createAchievement">
+         <%= form_for achievement,
+  	               url: entrance_campaign_achievement_path(@campaign, achievement),
+  	               remote: true,
+  	               html: { class: 'form-inline' } do |f| %>
+  	    <div class="form-group">
+  	      <%= f.text_field :score, class: 'form-control score', style: 'width: 50px;' %>
+  	    </div>
+	  	<button type="submit" class="btn btn-default">
+	   	 	<span class="glyphicons floppy_save"></span>
+	  	</button>
+  	 	<% end %>
+	 	</div>
+     </td>
+     <% else %>
+      <td>
+         <span><%= achievement.score %></span>
+         <div class="editEntranceAchievement">
+         <br>
+	         <%= form_for achievement,
+	  	               url: ajax_update_entrance_campaign_achievement_path(@campaign, achievement),
+	  	               html: { class: 'form-inline' } do |f| %>
+	  	    <div class="form-group">
+	  	      <%= f.text_field :score, class: 'form-control score', style: 'width: 50px;' %>
+	  	    </div>
+			
+	  	 <% end %>
+			
+        </div>
+      </td>
+      <td><button class="btn btn-default editEntranceAchievementButton">Редактировать</button></td>
+     <% end %>

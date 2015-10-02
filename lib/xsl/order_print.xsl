@@ -51,13 +51,19 @@
         <fo:static-content flow-name="oddFoot">
           <fo:block>
             <xsl:value-of select="id" />&nbsp;&ndash;&nbsp;<xsl:value-of select="revision" />
+			<fo:block font="5pt PT Serif">
+			  <xsl:if test="1 = /order/status">ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК</xsl:if>
+			</fo:block>
           </fo:block>
         </fo:static-content>
 
         <fo:static-content flow-name="evenFoot">
           <!--<fo:block text-align="end">-->
-          <fo:block>
+          <fo:block font="PT Serif">
             <xsl:value-of select="id" />&nbsp;&ndash;&nbsp;<xsl:value-of select="revision" />
+			<fo:block font="5pt PT Serif">
+			  <xsl:if test="1 = /order/status">ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК ЧЕРНОВИК</xsl:if>
+			</fo:block> 
           </fo:block>
         </fo:static-content>
 
@@ -81,7 +87,9 @@
             <fo:block border-top="3pt solid black" space-after="1pt"></fo:block>
             <fo:block border-bottom="0.5pt solid black" space-after="13pt"></fo:block>
             <fo:block font="14pt PT Serif" font-weight="bold" text-align="center" space-after="13pt">
-              ПРИКАЗ
+              <xsl:if test="1 = /order/status">ЧЕРНОВИК ПРИКАЗА</xsl:if>
+              <xsl:if test="2 = /order/status">ПРИКАЗ</xsl:if>
+			  <xsl:if test="3 = /order/status">ПРИКАЗ</xsl:if>
             </fo:block>
             <fo:table table-layout="fixed" width="100%" space-after="25pt">
               <fo:table-column column-width="proportional-column-width(1.7)" />
@@ -93,7 +101,7 @@
                     <fo:block font="12pt PT Serif">
                       <xsl:choose>
                         <xsl:when test="not(./sign/date)">
-                          от &laquo;______&raquo; ______________ 2014 г.
+                          от &laquo;______&raquo; ______________ 2015 г.
                         </xsl:when>
                         <xsl:otherwise>
                           от &laquo;<xsl:value-of select="substring(./sign/date, 9, 2)" />&raquo;
@@ -134,34 +142,24 @@
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
-                <fo:table-row>
-                  <fo:table-cell>
-                    <fo:block font="12pt PT Serif" font-weight="bold">
-                      <xsl:value-of select="students/student/speciality/faculty/short" />
-                    </fo:block>
-                  </fo:table-cell>
-                </fo:table-row>
-                <fo:table-row>
-                  <fo:table-cell>
-                    <fo:block font="12pt PT Serif" font-weight="bold">
-                      <xsl:call-template name="form_name">
-                        <xsl:with-param name="id" select="students/student/group/form" />
-                      </xsl:call-template>
-                      форма обучения
-                    </fo:block>
-                  </fo:table-cell>
-                </fo:table-row>
-                <!--<fo:table-row>-->
-                <!--<fo:table-cell>-->
-                <!--<fo:block font="12pt PT Serif">-->
-                <!--<xsl:call-template name="form_name">-->
-                <!--<xsl:with-param name="id" select="/order/form" />-->
-                <!--</xsl:call-template>-->
-                <!--форма обучения-->
-                <!--</fo:block>-->
-                <!--</fo:table-cell>-->
-                <!--</fo:table-row>-->
-                <!--<xsl:if test="payment">-->
+                <xsl:if test="'true' = order_template/check_group">
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block font="12pt PT Serif" font-weight="bold">
+                        <xsl:value-of select="students/student/speciality/faculty/short" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block font="12pt PT Serif" font-weight="bold">
+                        <xsl:call-template name="form_name">
+                          <xsl:with-param name="id" select="students/student/group/form" />
+                        </xsl:call-template>
+                        форма обучения
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
                   <fo:table-row>
                     <fo:table-cell>
                       <fo:block font="12pt PT Serif" font-weight="bold">
@@ -171,7 +169,7 @@
                       </fo:block>
                     </fo:table-cell>
                   </fo:table-row>
-                <!--</xsl:if>-->
+                </xsl:if>
               </fo:table-body>
             </fo:table>
           </fo:block>
@@ -200,7 +198,7 @@
       Основания:
     </fo:block>
     <fo:list-block margin-left="20pt">
-      <xsl:apply-templates select="./reason" />
+      <xsl:apply-templates select="./reason | /order/order_reasons/reason" />
     </fo:list-block>
   </xsl:template>
 
@@ -238,7 +236,7 @@
               </xsl:call-template><xsl:value-of select="substring(./employee/title, 2)" />
             </fo:block>
           </fo:table-cell>
-          <fo:table-cell>
+          <fo:table-cell display-align="after">
             <fo:block font="12pt PT Serif" text-align="end">
               <xsl:value-of select="./employee/name" />
             </fo:block>
@@ -261,11 +259,19 @@
           <fo:block font="12pt PT Serif" space-before="40pt">
             Исполнитель:
           </fo:block>
-          <xsl:apply-templates select="author/employee" />
+	      <fo:block font="12pt PT Serif" space-after="10pt" space-before="15pt">
+	        <xsl:call-template name="change_case">
+	          <xsl:with-param name="input_string" select="substring(author/employee/title, 1, 1)" />
+	          <xsl:with-param name="direction" select="'up'" />
+	        </xsl:call-template><xsl:value-of select="substring(author/employee/title, 2)" /><xsl:text> </xsl:text><xsl:value-of select="author/employee/department_short_name" />
+	      </fo:block>
+	      <fo:block font="12pt PT Serif" space-after="10pt">
+	        <xsl:apply-templates select="author/employee/name" />
+	      </fo:block>
         </xsl:when>
       </xsl:choose>
       <fo:block font="12pt PT Serif" space-before="10pt">
-        тел: <xsl:value-of select="author/employee/phone" />
+        <xsl:value-of select="author/employee/phone" />
       </fo:block>
 
       <fo:block font="12pt PT Serif" space-before="40pt">
@@ -285,24 +291,31 @@
     </fo:block>
     <fo:block font="12pt PT Serif" space-after="10pt">
       ___________________
-      <xsl:value-of select="./name" />
+      <xsl:apply-templates select="./name" />
     </fo:block>
     <fo:block font="12pt PT Serif">
-      &laquo;______&raquo; _______________ 2014 г.
+      &laquo;______&raquo; _______________ 2015 г.
     </fo:block>
 
+  </xsl:template>
+
+  <xsl:template match="user_name">
+    <xsl:param name="form">ip</xsl:param>
+    <xsl:value-of select="./name" />
   </xsl:template>
 
   <!-- Рассылка -->
   <xsl:template match="dispatch">
-    <fo:block font="12pt PT Serif" margin-top="20pt" padding-top="10pt">
-      Рассылка:
-    </fo:block>
-    <fo:list-block margin-left="20pt">
-      <xsl:apply-templates select="./department" />
-    </fo:list-block>
+    <xsl:if test="count(./department) > 0">
+      <fo:block font="12pt PT Serif" margin-top="160pt" padding-top="10pt">
+        Рассылка:
+      </fo:block>
+      <fo:list-block margin-left="20pt">
+        <xsl:apply-templates select="./department" />
+      </fo:list-block>
+    </xsl:if>
   </xsl:template>
-
+  
   <xsl:template match="department">
     <fo:list-item>
       <fo:list-item-label end-indent="label-end()">
@@ -378,7 +391,7 @@
                                       <fo:block font="12pt PT Serif">
                                           <xsl:choose>
                                               <xsl:when test="not(/order/sign/date)">
-                                                  от &laquo;______&raquo; ______________ 2014 г.
+                                                  от &laquo;______&raquo; ______________ 2015 г.
                                               </xsl:when>
                                               <xsl:otherwise>
                                                   от &laquo;<xsl:value-of select="substring(/order/sign/date, 9, 2)" />&raquo;
@@ -839,7 +852,7 @@
         <fo:list-item>
             <fo:list-item-label end-indent="label-end()">
                 <fo:block>
-                    <xsl:number format="1" />.
+                    <xsl:number format="1" />)
                 </fo:block>
             </fo:list-item-label>
             <fo:list-item-body start-indent="body-start()">

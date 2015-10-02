@@ -2,7 +2,36 @@
   <h1>Приказ <%= order_number(@order) %></h1>
 </div>
 
-<% if can?(:sign, Office::Order) #&& !@order.signed? %>
+<% if can?(:sign, Office::Order) && @order.underway? %>
   <%= render partial: 'sign_date_number', locals: {order: @order} %>
+<% elsif @order.draft? %>
+  <div class="col-sm-offset-5">
+  <%= form_for @order, url: office_order_path(@order) do |f| %>
+      <%= f.hidden_field :status, value: Office::Order::STATUS_UNDERWAY %>
+      <button id="pushToSign" disabled type="submit" class="btn btn-warning">
+          <span class="glyphicons pen"></span> Отправить на подпись
+      </button>
+  <% end %>
+  </div>
 <% end %>
 <%= @order.to_html %>
+
+<div class="row">
+<% if @order.draft? %>
+  <div class="col col-sm-3 col-sm-offset-1">
+    <%= link_to '<span class="glyphicons chevron-left"></span> Вернуться к черновикам'.html_safe, office_drafts_path(faculty: @order.students.first.faculty.id, template: @order.template.id), class: 'btn btn-default' %>
+  </div>
+<% elsif @order.underway? %>
+  <div class="col col-sm-3 col-sm-offset-1">
+      <%= link_to '<span class="glyphicons chevron-left"></span> Вернуться к приказам на подписи'.html_safe, office_underways_path(faculty: @order.students.first.faculty.id, template: @order.template.id), class: 'btn btn-default' %>
+  </div>
+<% else %>
+  <div class="col col-sm-3 col-sm-offset-1">
+      <%= link_to '<span class="glyphicons chevron-left"></span> Вернуться к приказам'.html_safe, office_orders_path(faculty: @order.students.first.faculty.id, template: @order.template.id), class: 'btn btn-default' %>
+  </div>
+<% end %>
+
+<div class="col col-sm-3 col-sm-offset-5">
+	<%= link_to '<span class="glyphicon glyphicon-print"></span> Распечатать'.html_safe, office_order_path(@order, format: :pdf), class: 'btn btn-success', target: :blank %>
+</div>
+</div>

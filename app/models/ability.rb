@@ -51,11 +51,11 @@ class Ability
       # end
 
       #if user.is?(:lecturer)
-        # can :manage, Study::Exam
-        # can :manage, Study::ExamMark
-        # Загрузка ресурсов, принадлежащих только текущему пользователю,
-        # производится в Study::DisciplinesController.
-        # can :manage, [Study::Discipline], Study::Discipline.include_teacher(user) { |d| }
+      # can :manage, Study::Exam
+      # can :manage, Study::ExamMark
+      # Загрузка ресурсов, принадлежащих только текущему пользователю,
+      # производится в Study::DisciplinesController.
+      # can :manage, [Study::Discipline], Study::Discipline.include_teacher(user) { |d| }
       #end
 
       if user.is?(:developer)
@@ -68,6 +68,12 @@ class Ability
 
       if user.is?(:library)
         can :manage, :library
+        can :work, :all_faculties
+      end
+
+      if user.is?(:firefighter)
+        can :rebukes, Office::Order
+        can :show,  Office::Order
       end
 
       if user.is?(:student_hr) || user.is?(:student_hr_boss)
@@ -76,10 +82,27 @@ class Ability
         can :manage, Office::Order
         can :manage, :student
         can :index, :groups
+        can :manage, Group
 
         can :reference, Student.valid_for_today
+        can :soccard_mistakes, Student
+
+        can :work, :all_faculties
       end
 
+      # отдел рецензирования
+      if user.is?(:recenz)
+        can :manage, Review
+        can :manage, University
+      end
+
+      # закупки
+      if user.is?(:purchase_manager) || user.is?(:purchase_user) || user.is?(:ciot)
+        can :manage, Purchase::Good
+        can :manage, Purchase::Supplier
+        can :manage, Purchase::LineItem
+        can :manage, Purchase::Purchase
+      end
     end
 
     can [:index, :show], :progress
@@ -95,7 +118,7 @@ class Ability
     can :index, Entrance::MinScore
 
     can :applications, Entrance::Campaign
-    can [:balls, :rating, :print_all, :crimea_rating], Entrance::Campaign
+    can [:balls, :rating, :print_all, :crimea_rating, :print_direction_register], Entrance::Campaign
     can :show, Entrance::Event
 
     can :index, EducationPrice
@@ -169,6 +192,15 @@ class Ability
     can :manage, Curator::TaskType
     can :manage, Hostel::Offense
     can :manage, Hostel::Report
+    soc_support_event(user)
+    can :soccard_mistakes, Student
+    can :delete, Social::Document
+
+  end
+
+  def soc_support_event(user)
+    can :manage, Event, event_category_id: EventCategory::SOCIAL_EVENTS_CATEGORY
+    can :manage, EventDateClaim
   end
 
   def soc_support_vedush(user)
@@ -176,28 +208,68 @@ class Ability
     can :without_med, User
     can :manage, Event, event_category_id: EventCategory::MEDICAL_EXAMINATION_CATEGORY
     can :manage, Social::Document
+    cannot :delete, Social::Document
     can :manage, Social::DocumentType
     can :read, Student
     can :study, Student
+
+    can :manage, Office::Order, order_template: Office::Order::REPRIMAND_TEMPLATE
+    cannot :sign, Office::Order
+    can :work, :all_faculties
   end
 
   def soc_support(user)
     can :manage, My::Support
+    can :manage, Social::Document
+    cannot :delete, Social::Document
+    can :manage, Social::DocumentType
+    can :read, Student
+    can :study, Student
+
+    can :manage, Office::Order, order_template: Office::Order::REPRIMAND_TEMPLATE
+    can :work, :all_faculties
   end
 
   def faculty_employee(user)
-    # Выпускников пока закрываем
-    #can :manage, Graduate
-    #can :manage, GraduateStudent
-    #can :manage, GraduateSubject
-    #can :manage, GraduateMark
+    can :manage, :plans
+    can :create_employer, Person
+    can :manage, Proof
 
+    # Подумать, как совместить это с тем, что Дирекция не преподаватель!!!
+    can :manage, Study::Discipline
+    can :manage, Study::Exam
+    can :manage, Study::Repeat
+    can :manage, Office::Order
+    cannot :sign, Office::Order
+    can :manage, Group
+    can :index, :groups
+
+    can :manage, Student
+    can :manage, Person
+  end
+
+  def aspirantura(user)
     can :manage, :plans
 
     # Подумать, как совместить это с тем, что Дирекция не преподаватель!!!
     can :manage, Study::Discipline
     can :manage, Study::Exam
     can :manage, Study::Repeat
+    can :manage, Office::Order
+    cannot :sign, Office::Order
+    can :manage, Group
+    can :index, :groups
+
+    can :work, :all_faculties
+    can :manage, Student, student_group_id: Student.aspirants.collect{|s| s.id}
+    can :create, Student
+    can :manage, Person
+  end
+
+  def ioo(user)
+    faculty_employee(user)
+
+    can :work, :all_faculties
   end
 
   def selection(user)
@@ -229,6 +301,7 @@ class Ability
     can :statistics, Entrance::Contract
     can :manage, Entrance::UseCheck
     can :manage, Entrance::UseCheckResult
+    can :manage, Entrance::Achievement
   end
 
   def selection_editor(user)
@@ -246,6 +319,7 @@ class Ability
 
     can :reject, :entrance_applications
     can :create, :entrance_orders
+    can :manage, Entrance::Achievement
   end
 
   def selection_io(user)
@@ -263,20 +337,50 @@ class Ability
     can :manage, Entrance::UseCheckResult
   end
 
+  def selection_foreign(user)
+    can :manage, Entrance::Campaign
+    cannot :orders, Entrance::Campaign
+
+    # can :manage, Entrance::Entrant, identity_document_type_id: 3
+    # can :manage, Entrance::Entrant, campaign_id: Entrance::Campaign::STATELINE
+    can :manage, Entrance::Entrant
+    cannot :destroy,  Entrance::Entrant
+    can :manage, Entrance::ExamResult
+    can :manage, Entrance::Application
+    can :manage, Entrance::EventEntrant
+    can :manage, Entrance::DocumentMovement
+    can :manage, Entrance::Contract
+    can :statistics, Entrance::Contract
+    can :manage, Entrance::UseCheck
+    can :manage, Entrance::UseCheckResult
+  end
+
   def zamestitel_otvetstvennogo_sekretarja(user)
     selection_editor(user)
     can :manage, Entrance::Exam
 
     can :mark, Entrance::ExamResult
+    can :entrance_protocol, Office::Order
+    can :update, Office::Order
+    can :show, Office::Order
+    can :orders, Entrance::Campaign
+
+    can :work, :all_faculties
   end
 
   def executive_secretary(user)
     zamestitel_otvetstvennogo_sekretarja(user)
     can :entrance_protocol, Office::Order
     can :update, Office::Order
+    can :show, Office::Order
     can :orders, Entrance::Campaign
+    can :numbers, Entrance::Campaign
     can :statistics, Entrance::Contract
+
+    can :work, :all_faculties
     # can :update, Achievement
     # can :validate_selection, Achievement
+
+    can :manage, Entrance::Achievement
   end
 end

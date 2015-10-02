@@ -37,7 +37,18 @@ $ ->
         if groups.length > 0
           $(select).val(groups[0].id).change()
 
+  updateGroupsAll = (groups) ->
+      select = $('.ajax-group-all')[0]
+      if select
+        select.options.length = 0
+        select.options.add(
+          new Option('все группы', '')
+        )
+        select.options.add(
+          new Option(group.name, group.id)
+        ) for group in groups
 
+		
   updateStudents = (group_id) ->
     if group_id != null
       $.getJSON root+'my/ajax/students', {
@@ -67,6 +78,15 @@ $ ->
       'course' : $('.ajax-course').val()
     }, (groups) ->
       updateGroups(groups)
+	  
+  $('.ajax-speciality-all').change ->
+    $.getJSON root+'study/disciplines/ajax/groups', {
+      'speciality':  $(this).val(),
+      'form' : $('.ajax-form').val(),
+      'course' : $('.ajax-course').val()
+    }, (groups) ->
+      updateGroupsAll(groups)
+	
 
   $('.ajax-form').change ->
     $.getJSON root+'study/disciplines/ajax/groups', {

@@ -25,5 +25,12 @@ coverage
 erd.pdf
 rspec.html
 .env
+.capistrano/
 spec.html
 .DS_Store
+
+matrix.iml
+Матрица.iml
+
+/public/systems
+/public/uploads

@@ -54,6 +54,23 @@
         <% end %>
     </table>
     <div class="col-sm-3 col-sm-offset-4">
-        <%= f.submit 'Внести результаты', class: 'btn btn-primary' %>
+      <%= f.submit 'Внести результаты', class: 'btn btn-primary' %>
     </div>
 <% end %>
+
+<div class="row">
+  <p>
+</div>
+<div class="row">
+  <%= form_for @exam, url: entrance_campaign_exam_path(@campaign, @exam) do |e| %>
+    <div class="col-sm-3">
+       <%= e.select :visible, options_for_select(
+                  [['Не опубликовывать', :false],
+                   ['Опубликовать результаты', :true]]),
+                       {}, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+       <%= e.submit 'Подтвердить', class: 'btn btn-danger' %>
+    </div>
+  <% end %>
+</div>

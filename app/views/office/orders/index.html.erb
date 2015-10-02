@@ -2,29 +2,61 @@
   <h1>Приказы по контингенту</h1>
 </div>
 
-<%= paginate_with_info @orders %>
+<%= render partial: 'filters', locals: {url: office_orders_path, ost: true} %>
+
+<%= paginate_with_info @order_students %>
 
 <table class="table table-striped">
   <thead>
   <tr>
     <th>#</th>
     <th>Номер</th>
-    <th>Дата</th>
     <th>Тип</th>
+    <% if params[:group_by_number] == '1' %>
+      <th>Количество студентов</th>
+    <% else %>
+      <th>Фамилия</th>
+      <th>Имя</th>
+      <th>Отчество</th>
+    <% end %>
+    <th>Факультет</th>
+    <th>Группа</th>
+    <th>Дата</th>
+    <th></th>
   </tr>
   </thead>
   <tbody>
-  <% @orders.each do |order| %>
+  <% if @order_students.empty? %>
     <tr>
-      <td><%= order.id %>&ndash;<%= order.version %></td>
-      <td><%= order.number if order.signed? %></td>
-      <td>
-        <%= l (order.signed? ? order.signing_date.to_date : order.editing_date) %>
-      </td>
-      <td><%= order.template.name %></td>
+        <td class="text-center" colspan="<%= params[:group_by_number] == '1' ? 8 : 10 %>">Ни одного приказа не было найдено. Попробуйте изменить параметры поиска.</td>
     </tr>
+  <% else %>
+    <% @order_students.each do |ost| %>
+      <tr>
+        <td class="nowrap"><%= ost.order.full_id %></td>
+        <td><%= ost.order.number %></td>
+        <td><%= ost.order.template.name if ost.order.template %></td>
+        <% if params[:group_by_number] == '1' %>
+            <td>
+                Всего: <%= order_details(ost.order) %>
+            </td>
+        <% else %>
+        <td><%= ost.person.last_name %></td>
+        <td><%= ost.person.first_name %></td>
+        <td><%= ost.person.patronym %></td>
+        <% end %>
+        <td><%= ost.student.group.speciality.faculty.abbreviation %></td>
+        <td class="nowrap"><%= ost.student.group.name %></td>
+        <td><%= l ost.order.signing_date.to_date %></td>
+        <td class="nowrap">
+          <%= link_to office_order_path(ost.order.id) do %>
+            <span class="glyphicons print"></span> Распечатать
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
   <% end %>
   </tbody>
 </table>
 
-<%= paginate @orders %>
+<%= paginate @order_students %>

@@ -16,7 +16,7 @@ pdf.font_size 11 do
       else
         pdf.text "на направление подготовки (специальность): <u>#{application.competitive_group_item.direction.new_code}, «#{application.competitive_group_item.direction.name}»</u>", inline_format: true
       end
-      pdf.text "Форма обучения: <u>#{application.competitive_group_item.form_name}</u> Основа обучения: <u>#{application.competitive_group_item.budget_name}</u>", inline_format: true
+      pdf.text "Форма обучения: <u>#{application.education_form_id == 10 ? 'заочная' : (application.education_form_id == 11 ? 'очная' : 'очно-заочная')}</u> Основа обучения: <u>#{application.is_payed ? 'по договорам' : 'бюджет'}</u>", inline_format: true
       pdf.text "В общежитии: <u>#{application.entrant.need_hostel? ? 'нуждаюсь' : 'не нуждаюсь'}</u>            Контактный/домашний телефон: <u>#{entrant.phone}</u>", inline_format: true
       pdf.text "#{entrant.female? ? 'Окончила' : 'Окончил'} #{entrant.edu_document.organization} в #{entrant.edu_document.graduation_year} г.<br>аттестат (диплом об окончании): <u>#{entrant.edu_document.series} № #{entrant.edu_document.number} от #{l entrant.edu_document.date}</u>", inline_format: true
       if Entrance::Entrant.aspirants.include? entrant
@@ -60,21 +60,23 @@ pdf.font_size 11 do
 
       pdf.text "Гражданство: <u> <#{entrant.nationality_type.name} </u>", inline_format: true
       pdf.text "Отношение к военной службе: <u> #{entrant.military_status} </u>", inline_format: true
-      if @campaign.id == 32014
+      if @campaign.id == 52015
         pdf.text "Наличие направления: <u> да </u>", inline_format: true
       else
         pdf.text "Наличие направления: <u> нет </u>", inline_format: true
       end
 
       if application.benefits.any?
-        pdf.text "Категория зачисления: <u>#{Unicode::downcase(application.benefits.first.benefit_kind.name)}</u> (#{application.benefits.first.temp_text}).", inline_format: true
-      elsif @campaign.id == 32014
+        pdf.text "Категория зачисления: <u>#{Unicode::downcase(application.benefits.first.benefit_kind.name)}</u> (#{application.benefits.map(&:temp_text).join(' ')}).", inline_format: true
+      elsif @campaign.id == 52015
         pdf.text 'Категория зачисления: <u> гослиния </u>', inline_format: true
+      elsif application.competitive_group_target_item_id
+        pdf.text "Категория зачисления: <u> по конкурсу целевого приёма по договору #{application.competitive_group_target_item.target_organization.contract_number} с  #{application.competitive_group_target_item.target_organization.name}</u>", inline_format: true
       else
         pdf.text 'Категория зачисления: <u> по конкурсу </u>', inline_format: true
       end
 
-      unless @campaign.id == 32014
+      unless @campaign.id == 52015
         pdf.text 'Оценки для участия в конкурсе:'
         entrant.exam_results.in_competitive_group(application.competitive_group_item.competitive_group).each_with_index do |exam_result, index|
           result = ["#{index + 1}."]
@@ -90,6 +92,30 @@ pdf.font_size 11 do
           pdf.text result.join(' ')
         end
       end
+
+
+      if entrant.achievements.any?
+        pdf.text 'Индивидуальные достижения:'
+        entrant.achievements.each_with_index do |achievement, index|
+          result = ["#{index + 1}."]
+          result << achievement.achievement_type.institution_achievement.name
+          result << achievement.document
+          result << l(achievement.date) if achievement.date.present?
+          # result << "(#{exam_result.exam_type})"
+
+          # if application.benefits.first && application.benefits.first.benefit_kind.out_of_competition?
+          #   result << ''
+          # else
+          #   result << exam_result.score
+          # end
+
+          pdf.text result.join(' ')
+        end
+      end
+
+
+
+
 
       pdf.move_down 4
       pdf.text 'Достоверность всех предоставленных сведений и подлинность документов подтверждаю.', align: :center
@@ -111,7 +137,7 @@ pdf.font_size 11 do
         pdf.text 'МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ РОССИЙСКОЙ ФЕДЕРАЦИИ<br>ФГБОУ ВПО «МОСКОВСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ ПЕЧАТИ<br>ИМЕНИ ИВАНА ФЕДОРОВА»', align: :center, style: :bold, inline_format: true
 
         pdf.move_down 8
-        pdf.text "направление подготовки (специальность): <strong>#{application.competitive_group_item.direction.new_code}</strong>                     форма обучения: <strong>#{application.competitive_group_item.form_name}</strong>", inline_format: true
+        pdf.text "направление подготовки (специальность): <strong>#{application.competitive_group_item.direction.new_code}</strong>                     форма обучения: <strong>#{application.education_form_id == 10 ? 'заочная' : (application.education_form_id == 11 ? 'очная' : 'очно-заочная')}</strong>", inline_format: true
         pdf.move_down 8
         pdf.font_size 12 do
           pdf.text "ЭКЗАМЕНАЦИОННЫЙ ЛИСТ №#{application.number}", align: :center

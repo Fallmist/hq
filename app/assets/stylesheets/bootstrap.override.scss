@@ -1,0 +1,60 @@
+.success {
+   background-color: #dff0d8;
+ }
+
+.current {
+  background-color: #eee;
+}
+
+.danger {
+  background-color: #f2dede;
+}
+
+.warning {
+  background-color: #fcf8e3;
+}
+
+.selected {
+  border: 3px solid #ddd;
+}
+
+.header-link{
+  color: black;
+}
+
+.header-link:hover{
+  color: black;
+}
+
+.nav-header{
+  font-weight: bold;
+}
+
+.super-tabs{
+  font-size: 2em;
+  li{
+    a{
+      color: rgb(92, 184, 92);
+    }
+  };
+  li.active a{
+    background-color: rgb(92, 184, 92) !important;
+  }
+}
+
+.footer {
+  background-color: #1b1b1b;
+  background-image: -moz-linear-gradient(top, #222222, #111111);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#222222), to(#111111));
+  background-image: -webkit-linear-gradient(top, #222222, #111111);
+  background-image: -o-linear-gradient(top, #222222, #111111);
+  background-image: linear-gradient(to bottom, #222222, #111111);
+  background-repeat: repeat-x;
+  border-color: #252525;
+  color: #cccccc;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222', endColorstr='#ff111111', GradientType=0);
+}
+
+.view-better:hover{
+	color: #000;
+};

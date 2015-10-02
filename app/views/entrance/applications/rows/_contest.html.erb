@@ -3,9 +3,10 @@
 <% a.abitexams.each do |exam| %>
   <td><%= exam.score %></td>
 <% end %>
+<td><%= a.abitachievements %></td>
 <td><%= a.abitpoints %></td>
 
-<% if a.payed? && can?(:manage, Entrance::Application) %>
+<% if a.is_payed && can?(:manage, Entrance::Application) %>
  <td class="nowrap">
    <% if a.contract %>
      № <%= a.contract.number %>
@@ -65,12 +66,12 @@
 <td>
   <% if a.order && a.order.signing_date %>
     № <%= a.order.number %> от <%= l a.order.signing_date.to_date %>
-  <% elsif can?(:create, :entrance_orders) && !a.order %>
+  <% elsif can?(:create, :entrance_orders) && !a.order && a.packed %>
     <%= image_tag asset_path('loader.gif'), class: 'loader', style: 'display: none;' %>
-    <%# if if ((a.original? && !a.payed? && success) || (a.payed? && a.contract && a.contract.paid?)) %>
+    <% if (a.original? && !a.is_payed) || (a.is_payed && a.contract && a.contract.paid?) %>
       <%= link_to 'Зачислить', enroll_entrance_campaign_entrant_application_path(@campaign.id, a.entrant.id, a.id), class: 'btn btn-success enroll-link',
                   data: {question: "Вы уверены, что хотите зачислить абитуриента #{a.entrant.full_name}?"}, remote: true %>
-    <%# end %>
+    <% end %>
   <% elsif can?(:create, :entrance_orders) && a.order %>
     формируется приказ о зачислении
   <% end %>

@@ -6,6 +6,7 @@ class Study::CheckpointsController < ApplicationController
   def index
     redirect_to new_study_discipline_checkpoint_path(@discipline) if @checkpoints.empty?
     @classes = @discipline.classes
+    @students = @discipline.students
   end
 
   def new ; end
@@ -37,6 +38,8 @@ class Study::CheckpointsController < ApplicationController
                                    date: study_checkpoint[:date],
                                    name: study_checkpoint[:name], details: study_checkpoint[:details],
                                    max: study_checkpoint[:max], min: study_checkpoint[:min])
+      redirect_to study_discipline_checkpoints_path(@discipline)
+    else
       redirect_to study_discipline_checkpoints_path(@discipline)
     end
   end

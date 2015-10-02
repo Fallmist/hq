@@ -1,16 +1,10 @@
 <% link = study_group_print_progress_path  %>
 <% if discipline %>
   <% link << "?discipline=#{discipline.id}" %>
-  <% if discipline.final_exam %>
-    <% date = discipline.final_exam.exam? %>
-  <% else %>
-    <% date = false %>
-  <% end %>
+  <% date = discipline.final_exam.exam? %>
 <% else %>
   <% date = false %>
 <% end %>
-
-<% date = false %>
 
 <% if false %>
 <%= link_to link, id: 'printProgress', class: 'btn btn-info navigation_trip',
@@ -22,6 +16,10 @@
 <br>
 <br>
 <% if date %>
+
+<% if discipline.final_exam.date %>
+ 
+<% if discipline.final_exam.date.future? %>
   <div class="alert alert-danger">
     Студенты, обязательно посмотрите в конце страницы что вас ждёт на экзамене.
     Если вас не устраивает возможность повышения оценки, которую даёт вам
@@ -32,6 +30,27 @@
     Если вы заметили ошибку в расчётах — пишите по электронной почте в отдел
     информационных систем (адреса в конце страницы).
   </div>
+<% else %>
+  <div class="alert alert-info">
+    Результаты экзамена (<%= l discipline.final_exam.date %>) можно посмотреть в конце страницы.
+  </div>
+
+<% end %>
+
+<% else %>
+
+  <div class="alert alert-danger">
+    Студенты, обязательно посмотрите в конце страницы что вас ждёт на экзамене.
+    Если вас не устраивает возможность повышения оценки, которую даёт вам
+    экзамен — сдавайте и пересдавайте задания по контрольным точкам. Приходите
+    к преподавателям и улучшайте свои баллы. Сделайте максимум в течение
+    семестра, чтобы получить максимальную оценку по дисциплине.
+    <br><br>
+    Если вы заметили ошибку в расчётах — пишите по электронной почте в отдел
+    информационных систем (адреса в конце страницы).
+  </div>
+  
+<% end %>
 <% end %>
 
 
@@ -90,6 +109,10 @@
     </li>
   </ul>
 
+<% if discipline.final_exam.date %>
+
+<% if discipline.final_exam.date.future?  %>
+
   <table class="table table-striped table-bordered">
     <thead>
     <tr>
@@ -126,4 +149,94 @@
       <% end %>
     </tbody>
   </table>
+
+<% else %>
+
+  <table class="table table-hover">
+    <tr>
+      <th class="text-muted">#</th>
+      <th>Студент</th>
+      <th>Итоговый балл</th>
+      <th colspan="2">Результат</th>
+    </tr>
+  <% students.each do |student| %>
+    <tr>
+      <td class="text-muted"><%= student[:student].id %></td>
+      <td><%= student[:student].person.full_name %></td>
+
+      <% final_mark = discipline.final_exam.final_marks.by_student(student[:student]).last %>
+      <% rating_mark = discipline.final_exam.rating_marks.by_student(student[:student]).last %>
+	  <% ball = student[:student].ball(discipline.final_exam.discipline)%>
+      <% if rating_mark == nil %>
+        <td>-</td>
+      <% else %>
+        <td>
+          <ul class="list-unstyled">
+            <li>за семестр — <%= ball %></li>
+            <li>за экзамен — <span id="exam_mark_li_<%= student[:student].id %>"><%= rating_mark.value %></span></li>
+          </ul>
+        </td>
+      <% end %>
+
+      <% if final_mark == nil %>
+        <td colspan="2">-</div>
+        </td>
+      <% else %>
+          <% if rating_mark == nil %>
+            <td>-</td>
+          <% else %>
+        <td>  
+          <% final = rating_mark.value * discipline.final_exam.weight / 100.0 + (1.0 - discipline.final_exam.weight / 100.0) * ball.to_f  %>
+          <% result = mark_count(rating_mark.value, final, (final_mark.value.to_s if final_mark.value == 9 || final_mark.value == 1)) %>
+            <div><span class='label label-<%= result[:span] %>'><%= result[:mark] %></span></div>
+          </td>
+          <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  </table>
+  
+<% end %>
+
+<% else %>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th rowspan="2" class="muted">#</th>
+      <th rowspan="2">Имя</th>
+      <th colspan="4">
+        Нужно набрать на экзамене в баллах
+        (по данным на <%= l Date.today %>)
+      </th>
+    </tr>
+    <tr>
+      <th>Отлично</th>
+      <th>Хорошо</th>
+      <th>Удовл.</th>
+      <th>Неуд.</th>
+    </tr>
+    </thead>
+    <tbody>
+      <% students.each do |s| %>
+      <% r = s[:progress] %>
+        <% if r[:ball].blank? || r[:ball] < 55 then %>
+          <% next %>
+        <% end %>
+        <tr>
+          <td class="muted"><%= s[:student].id %></td>
+          <td><%= s[:student].person.full_name %></td>
+          <% [5,4,3,2].each do |m| %>
+          <td>
+            <% result = discipline.final_exam.predication(m,r[:ball]) %>
+            <%= result[:min] %> — <%= result[:max] %>
+          </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
+<% end %>
+
 <% end %>

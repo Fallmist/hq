@@ -41,8 +41,12 @@ class Entrance::Entrant < ActiveRecord::Base
   # или всё-таки has_many?
   has_one :student, class_name: 'Student', foreign_key: :entrant_id
 
+  has_many :achievements, class_name: 'Entrance::Achievement', foreign_key: :entrant_id, dependent: :destroy
+  accepts_nested_attributes_for :achievements, allow_destroy: true
+
   scope :aspirants, -> { joins(:edu_document).where('entrance_edu_documents.direction_id IS NOT NULL') }
   scope :from_exam, -> exam_id { joins(:exam_results).where('entrance_exam_results.exam_id = ? AND entrance_exam_results.form = 2', exam_id) }
+  scope :from_achievement_type, -> achievement_type_id { joins(:achievements).where('entrance_achievements.entrance_achievement_type_id = ?', achievement_type_id) }
 
   scope :from_pseries, -> pseries { where(pseries: pseries) }
   scope :from_pnumber, -> pnumber { where(pnumber: pnumber) }
@@ -73,18 +77,27 @@ class Entrance::Entrant < ActiveRecord::Base
   end
 
   after_update do |entrant|
-    Entrance::Log.create entrant_id: entrant.id, user_id: User.current.id,
-                         comment: 'Обновлена информация об абитуриенте.'
+    if entrant.visible
+      Entrance::Log.create entrant_id: entrant.id, user_id: User.current.id,
+                           comment: 'Обновлена информация об абитуриенте.'
+    else
+      Entrance::Log.create entrant_id: entrant.id, user_id: User.current.id,
+                           comment: 'Абитуриент скрыт.'
+    end
   end
 
   default_scope do
-    order(:last_name, :first_name, :patronym)
+    where(visible: true).order(:last_name, :first_name, :patronym)
   end
 
   # def patronym
   #   res = super
   #   res.blank? ? ' ' : res
   # end
+
+  def is_foreign?
+    3 == identity_document_type_id || 1 != entrant.nationality_type_id
+  end
 
   def full_name
     [last_name, first_name, patronym].join(' ')
@@ -148,8 +161,9 @@ class Entrance::Entrant < ActiveRecord::Base
         end
 
         if order_id
-          competitive_group_id = Office::OrderMeta.where(order_meta_order: order_id).where(order_meta_pattern: 'Конкурсная группа').first.order_meta_text.to_i
-          xml << applications.find_all { |a| a.competitive_group.id == competitive_group_id}.first.to_nokogiri.root.to_xml
+          # competitive_group_id = Office::OrderMeta.where(order_meta_order: order_id).where(order_meta_pattern: 'Конкурсная группа').first.order_meta_text.to_i
+          xml << packed_application.to_nokogiri.root.to_xml
+          # xml << applications.find_all { |a| a.competitive_group.id == competitive_group_id }.first.to_nokogiri.root.to_xml
         else
           xml << packed_application.to_nokogiri.root.to_xml
         end
